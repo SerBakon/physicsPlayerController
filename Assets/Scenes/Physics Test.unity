@@ -129,7 +129,6 @@ GameObject:
   m_Component:
   - component: {fileID: 52185466}
   - component: {fileID: 52185468}
-  - component: {fileID: 52185470}
   - component: {fileID: 52185469}
   - component: {fileID: 52185467}
   - component: {fileID: 52185465}
@@ -215,7 +214,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 52185464}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 475f671835b14174bb19cbbf24a8e505, type: 3}
   m_Name: 
@@ -247,36 +246,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCam: {fileID: 126475590}
   sens: 5
---- !u!114 &52185470
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 52185464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50d45b62269fb6248b0e811a3a608e18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  walkSpeed: 5
-  sprintSpeed: 7.5
-  groundDrag: 3
-  jumpForce: 5
-  jumpCooldown: 0.5
-  airMultiplier: 10
-  crouchSpeed: 2.5
-  crouchYScale: 0.5
-  jumpKey: 32
-  sprintKey: 304
-  crouchKey: 306
-  playerHeight: 2
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 64
-  maxSlopeAngle: 60
-  orientation: {fileID: 0}
-  state: 0
 --- !u!1 &126475588
 GameObject:
   m_ObjectHideFlags: 0
@@ -1013,6 +982,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: d2f0da3998423f44594868ffed55c3e6, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 5.32
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d2f0da3998423f44594868ffed55c3e6, type: 3}
       propertyPath: m_LocalScale.y
       value: 0.19
