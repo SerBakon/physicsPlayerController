@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 52185465}
   - component: {fileID: 52185467}
   - component: {fileID: 52185468}
+  - component: {fileID: 52185469}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -218,6 +219,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 250
+  sprint: 304
+--- !u!114 &52185469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 52185464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b39171d9c44ca643b4eb346c2eaeced, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCam: {fileID: 126475590}
 --- !u!1 &126475588
 GameObject:
   m_ObjectHideFlags: 0
@@ -466,6 +481,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 411563518}
+  - component: {fileID: 411563519}
   m_Layer: 0
   m_Name: Screen HUD
   m_TagString: Untagged
@@ -489,6 +505,20 @@ Transform:
   - {fileID: 385181155}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &411563519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411563517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9212db0452c28a24092b6e87cf7bc837, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocityText: {fileID: 2019569889}
+  playerMovement: {fileID: 52185468}
 --- !u!4 &658706220 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 36078ab0369161e49a29d349ae3e0739, type: 3}
