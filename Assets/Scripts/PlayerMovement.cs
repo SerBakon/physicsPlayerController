@@ -6,6 +6,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float movementSpeed;
     [SerializeField] private float jumpForce;
 
+    [SerializeField] private float groundDrag;
+
     [Header("Player Inputs")]
     [SerializeField] private KeyCode sprint;
     [SerializeField] private KeyCode jump;
@@ -29,11 +31,22 @@ public class PlayerMovement : MonoBehaviour
     // Bool's
     private bool isGrounded;
 
+    // Enums
+    private movementState moveState;
+    private enum movementState {
+        Idle,
+        Walking,
+        Sprinting,
+        Air
+    }
+
     private void Start()
     {
         walkingSpeed = movementSpeed;
         sprintingSpeed = movementSpeed * 1.5f;
         rb = GetComponent<Rigidbody>();
+
+        moveState = movementState.Idle;
     }
 
     private void Update() {
@@ -57,20 +70,35 @@ public class PlayerMovement : MonoBehaviour
     private void moveCharacterGround(Vector3 direction) {
         movementSpeed = Input.GetKey(sprint) ? sprintingSpeed : walkingSpeed;
 
-        Vector3 horizontalVelocity = direction * movementSpeed * Time.fixedDeltaTime;
+        rb.AddForce(direction * movementSpeed * 10f, ForceMode.Force);
 
-        horizontalVelocity.y = rb.linearVelocity.y;
-        rb.linearVelocity = horizontalVelocity;
+        if (isGrounded) {
+            rb.linearDamping = groundDrag;
+        } else {
+            rb.linearDamping = 0;
+        }
+        speedControl();
+    }
+
+    private void speedControl() {
+        Vector3 horizontalVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+        if(horizontalVel.magnitude > movementSpeed) {
+            Vector3 limitedVel = horizontalVel.normalized * movementSpeed;
+            rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
+        }
     }
 
     private void characterJump() {
-        if(isGrounded && Input.GetKeyDown(jump)) {
+        if(isGrounded && Input.GetKey(jump)) {
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
 
     private void setGrounded() {
-        if (Physics.CheckSphere(feetPos.position, .5f, groundLayer)) {
+        if (Physics.CheckSphere(feetPos.position, .02f, groundLayer)) {
             isGrounded = true;
         } else {
             isGrounded = false;
@@ -81,6 +109,12 @@ public class PlayerMovement : MonoBehaviour
         direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")).normalized;
         direction = transform.TransformDirection(direction);
     }
+
+    private void setState() {
+
+    }
+
+    // Getters and Setters
 
     public float Velocity {
         get { return rb.linearVelocity.magnitude; }
