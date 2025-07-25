@@ -15,6 +15,9 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
+        if(playerCam == null) {
+            Debug.LogWarning("No Camera Found!");
+        }
         Cursor.lockState = CursorLockMode.Locked;
 
         rotX = transform.eulerAngles.x;

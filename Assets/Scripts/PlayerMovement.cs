@@ -45,6 +45,9 @@ public class PlayerMovement : MonoBehaviour
         walkingSpeed = movementSpeed;
         sprintingSpeed = movementSpeed * 1.5f;
         rb = GetComponent<Rigidbody>();
+        if(rb == null ) {
+            Debug.LogError("No RigidBody Found!");
+        }
 
         moveState = movementState.Idle;
     }
@@ -101,7 +104,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void setGrounded() {
-        if (Physics.CheckSphere(feetPos.position, .5f, groundLayer)) {
+        if (Physics.CheckSphere(feetPos.position, .15f, groundLayer)) {
             isGrounded = true;
         } else {
             isGrounded = false;
@@ -135,5 +138,12 @@ public class PlayerMovement : MonoBehaviour
 
     public float Velocity {
         get { return rb.linearVelocity.magnitude; }
+    }
+
+    // Debug Gizmos
+    private void OnDrawGizmos() {
+        // Draws the isGrounded check
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(feetPos.position, 0.15f);
     }
 }
