@@ -55,6 +55,8 @@ public class PlayerMovement : MonoBehaviour
         characterJump();
 
         setGrounded();
+
+        setState();
     }
 
     private void FixedUpdate()
@@ -67,8 +69,9 @@ public class PlayerMovement : MonoBehaviour
         moveCharacterGround(direction);
     }
 
+    // Ground Movement
     private void moveCharacterGround(Vector3 direction) {
-        movementSpeed = Input.GetKey(sprint) ? sprintingSpeed : walkingSpeed;
+        //movementSpeed = Input.GetKey(sprint) ? sprintingSpeed : walkingSpeed;
 
         rb.AddForce(direction * movementSpeed * 10f, ForceMode.Force);
 
@@ -98,7 +101,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void setGrounded() {
-        if (Physics.CheckSphere(feetPos.position, .02f, groundLayer)) {
+        if (Physics.CheckSphere(feetPos.position, .5f, groundLayer)) {
             isGrounded = true;
         } else {
             isGrounded = false;
@@ -111,7 +114,21 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void setState() {
+        // Set Modes
+        if (isGrounded && Input.GetKey(sprint)) {
+            // Sprinting
+            moveState = movementState.Sprinting;
+            movementSpeed = sprintingSpeed;
+        } else if (isGrounded) {
+            // Walking
+            moveState = movementState.Walking;
+            movementSpeed = walkingSpeed;
+        } else {
+            // In Air
+            moveState = movementState.Air;
+        }
 
+            Debug.Log(moveState.ToString());
     }
 
     // Getters and Setters
