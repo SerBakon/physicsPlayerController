@@ -1,4 +1,5 @@
 using PurrNet;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PlayerMovement : NetworkBehaviour
@@ -24,6 +25,8 @@ public class PlayerMovement : NetworkBehaviour
 
     [Header("Transforms")]
     [SerializeField] private Transform feetPos;
+
+    [SerializeField] private Transform orientation;
     //[SerializeField] private BoxCollider wallCheck;
 
     [Header("Layers")]
@@ -38,6 +41,9 @@ public class PlayerMovement : NetworkBehaviour
 
     private float crouchSpeed;
     private float startYscale;
+
+    private float horizontalInput;
+    private float verticalInput;
 
     // Vector3's
     private Vector3 direction;
@@ -97,6 +103,9 @@ public class PlayerMovement : NetworkBehaviour
         setGrounded();
 
         setState();
+
+        horizontalInput = Input.GetAxis("Horizontal");
+        verticalInput = Input.GetAxis("Vertical");
     }
 
     private void FixedUpdate()
@@ -122,7 +131,7 @@ public class PlayerMovement : NetworkBehaviour
                 toggleWalk();
                 break;
             case movementState.Sliding:
-                startSlide();
+                slidingMovement();
                 break;
             default:
                 airControl();
@@ -147,7 +156,7 @@ public class PlayerMovement : NetworkBehaviour
                 rb.linearVelocity = rb.linearVelocity.normalized * movementSpeed;
             }
         } else {
-            Vector3 horizontalVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            Vector3 horizontalVel = getHorizontalVelocity();
 
             if (horizontalVel.magnitude > movementSpeed) {
                 Vector3 limitedVel = horizontalVel.normalized * movementSpeed;
@@ -175,7 +184,7 @@ public class PlayerMovement : NetworkBehaviour
     private void jumpAction() {
         exitingSlope = true;
         //Debug.Log(exitingSlope);
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.linearVelocity = getHorizontalVelocity();
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
     private void resetJump() {
@@ -183,14 +192,10 @@ public class PlayerMovement : NetworkBehaviour
         exitingSlope = false;
     }
     // ---------------------- SLIDING -------------------------- \\
-    private void startSlide() {
-
-    }
     private void slidingMovement() {
+        Vector3 inputDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-    }
-    private void endSlide() {
-
+        rb.AddForce(inputDirection.normalized * slideForce, ForceMode.Force);
     }
     // ---------------------- CROUCHING -------------------------- \\
     private void startCrouch() {
@@ -221,7 +226,7 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     private void getDirection() {
-        direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")).normalized;
+        direction = new Vector3(horizontalInput, 0f, verticalInput).normalized;
         direction = transform.TransformDirection(direction);
     }
 
@@ -238,6 +243,10 @@ public class PlayerMovement : NetworkBehaviour
 
     private Vector3 GetSlopeDirection() {
         return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
+    }
+
+    private Vector3 getHorizontalVelocity() {
+        return new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
     }
 
     // ---------------------- STATE HANDLING -------------------------- \\
