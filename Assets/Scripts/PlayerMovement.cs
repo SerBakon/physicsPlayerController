@@ -1,6 +1,7 @@
+using PurrNet;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float movementSpeed;
@@ -20,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Transforms")]
     [SerializeField] private Transform feetPos;
+    //[SerializeField] private BoxCollider wallCheck;
 
     [Header("Layers")]
     [SerializeField] private LayerMask groundLayer;
@@ -52,8 +54,17 @@ public class PlayerMovement : MonoBehaviour
         Walking,
         Sprinting,
         Crouching,
+        WallRunning,
         Air
     }
+
+    // ---------------------- START / UPDATE FUNCTIONS -------------------------- \\
+    protected override void OnSpawned() {
+        base.OnSpawned();
+
+        enabled = isOwner;
+    }
+
     private void setValues() {
         readyToJump = true;
         walkingSpeed = movementSpeed;
@@ -64,6 +75,7 @@ public class PlayerMovement : MonoBehaviour
         if (rb == null) {
             Debug.LogError("No RigidBody Found!");
         }
+        rb.freezeRotation = true;
 
         moveState = movementState.Idle;
     }
@@ -87,19 +99,20 @@ public class PlayerMovement : MonoBehaviour
         //Debug.Log(rb.linearVelocity.magnitude);
     }
 
+    // ---------------------- MOVEMENT -------------------------- \\
     private void characterMovement(Vector3 direction) {
         moveCharacterGround(direction);
     }
 
-    // Ground Movement
     private void moveCharacterGround(Vector3 direction) {
-        // Change player scale
+        // Crouch
         if (moveState == movementState.Crouching) {
             transform.localScale = new Vector3(transform.localScale.x, crouchYscale, transform.localScale.z);
         } else {
             transform.localScale = new Vector3(transform.localScale.x, startYscale, transform.localScale.z);
         }
 
+        // On Slope
         if(onSlope() && !exitingSlope) {
             rb.AddForce(GetSlopeDirection() * movementSpeed * 20f, ForceMode.Force);
             if (rb.linearVelocity.y > 0) {
@@ -109,6 +122,7 @@ public class PlayerMovement : MonoBehaviour
         
         rb.useGravity = !onSlope();
 
+        // Normal Running/Sprinting
         rb.AddForce(direction * movementSpeed * 10f, ForceMode.Force);
         if (isGrounded) {
             rb.linearDamping = groundDrag;
@@ -132,6 +146,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+    // ---------------------- JUMPING -------------------------- \\
 
     private void characterJump() {
         if(isGrounded && Input.GetKey(jump) && readyToJump) {
@@ -150,6 +165,7 @@ public class PlayerMovement : MonoBehaviour
         readyToJump = true;
         exitingSlope = false;
     }
+    // ---------------------- MOVEMENT HELPER FUNCTIONS -------------------------- \\
 
     private void setGrounded() {
         if (Physics.CheckSphere(feetPos.position, .15f, groundLayer)) {
@@ -157,6 +173,7 @@ public class PlayerMovement : MonoBehaviour
         } else {
             isGrounded = false;
         }
+        Debug.Log(isGrounded);
     }
 
     private void getDirection() {
@@ -178,6 +195,9 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 GetSlopeDirection() {
         return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
     }
+
+    // ---------------------- STATE HANDLING -------------------------- \\
+
     private void setState() {
         // Set Modes
         if (isGrounded && Input.GetKey(sprint)) {
@@ -200,13 +220,13 @@ public class PlayerMovement : MonoBehaviour
             //Debug.Log(moveState.ToString());
     }
 
-    // Getters and Setters
+    // ---------------------- GETTERS AND SETTERS -------------------------- \\
 
     public float Velocity {
         get { return rb.linearVelocity.magnitude; }
     }
 
-    // Debug Gizmos
+    // ---------------------- DEBUG GIZMOS -------------------------- \\
     private void OnDrawGizmos() {
         // Draws the isGrounded check
         Gizmos.color = Color.green;

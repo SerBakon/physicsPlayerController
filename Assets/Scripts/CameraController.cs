@@ -1,6 +1,8 @@
+using PurrNet;
+using System.Globalization;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController : NetworkBehaviour
 {
     [Header("Camera")]
     [SerializeField] private Camera playerCam;
@@ -13,9 +15,28 @@ public class CameraController : MonoBehaviour
     private float rotX, rotY;
     private float xMin, xMax;
 
+
+    // Script Calls
+
+    //private PlayerMovement playerMovement;
+
+    protected override void OnSpawned() {
+        base.OnSpawned();
+
+        enabled = isOwner;
+
+        playerCam.gameObject.SetActive(isOwner);
+    }
+
     void Start()
     {
-        if(playerCam == null) {
+        //if (isOwner) {
+        //    playerCam = transform.GetChild(1).GetComponent<Camera>();
+        //} else {
+        //    playerCam.enabled = false;
+        //}
+
+        if (playerCam == null) {
             Debug.LogWarning("No Camera Found!");
         }
         Cursor.lockState = CursorLockMode.Locked;
