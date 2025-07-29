@@ -142,7 +142,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void jumpAction() {
         exitingSlope = true;
-
+        Debug.Log(exitingSlope);
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
@@ -168,7 +168,7 @@ public class PlayerMovement : MonoBehaviour
         
         if(Physics.Raycast(feetPos.transform.position, Vector3.down, out slopeHit, .2f)) {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
-            Debug.Log("On Slope with: " + angle + " Degrees");
+            //Debug.Log("On Slope with: " + angle + " Degrees");
             return angle < maxSlopeAngle && angle != 0;
         }
 
