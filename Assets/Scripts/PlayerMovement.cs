@@ -121,6 +121,9 @@ public class PlayerMovement : NetworkBehaviour
             case movementState.Sprinting:
                 toggleWalk();
                 break;
+            case movementState.Sliding:
+                startSlide();
+                break;
             default:
                 airControl();
                 break;
@@ -135,7 +138,7 @@ public class PlayerMovement : NetworkBehaviour
         }
         rb.useGravity = !onSlope();
         speedControl();
-        Debug.Log(rb.linearVelocity.y);
+        //Debug.Log(rb.linearVelocity.y);
     }
 
     private void speedControl() {
@@ -155,6 +158,7 @@ public class PlayerMovement : NetworkBehaviour
 
     private void airControl() {
         rb.AddForce(direction * movementSpeed * 10f, ForceMode.Force);
+        // Multiply linearVel.y for better gravity feel
         if(rb.linearVelocity.y < 0) {
             rb.AddForce(new Vector3(0, rb.linearVelocity.y * 5.0f, 0));
         }
@@ -190,6 +194,7 @@ public class PlayerMovement : NetworkBehaviour
     }
     // ---------------------- CROUCHING -------------------------- \\
     private void startCrouch() {
+        toggleWalk();
         Debug.Log("Crouching");
     }
 
@@ -239,7 +244,7 @@ public class PlayerMovement : NetworkBehaviour
 
     private void setState() {
         // Set Modes
-        if (isGrounded && Input.GetKey(sprint)) {
+        if (isGrounded && Input.GetKey(sprint) && !Input.GetKey(crouch)) {
             // Sprinting
             moveState = movementState.Sprinting;
             movementSpeed = sprintingSpeed;
@@ -259,7 +264,7 @@ public class PlayerMovement : NetworkBehaviour
             // In Air
             moveState = movementState.Air;
         }
-        //Debug.Log(moveState.ToString());
+        Debug.Log(moveState.ToString());
     }
 
     // ---------------------- GETTERS AND SETTERS -------------------------- \\

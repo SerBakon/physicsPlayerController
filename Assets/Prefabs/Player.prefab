@@ -2612,11 +2612,12 @@ MonoBehaviour:
   groundDrag: 3
   crouchYscale: 0.5
   maxSlopeAngle: 60
+  slideForce: 0
+  minSlideVelocity: 3
   sprint: 304
   jump: 32
   crouch: 306
   feetPos: {fileID: 6810847713873023397}
-  wallCheck: {fileID: 6998055798844996497}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
