@@ -121,20 +121,14 @@ public class PlayerMovement : NetworkBehaviour
 
     private void moveCharacterGround(Vector3 direction) {
         switch(moveState) {
-            case movementState.Crouching:
-                startCrouch();
-                break;
-            case movementState.Walking:
-                toggleWalk(); 
-                break;
-            case movementState.Sprinting:
-                toggleWalk();
+            case movementState.Air:
+                airControl();
                 break;
             case movementState.Sliding:
                 slidingMovement();
                 break;
             default:
-                airControl();
+                toggleWalk();
                 break;
 
         }
@@ -198,10 +192,10 @@ public class PlayerMovement : NetworkBehaviour
         rb.AddForce(inputDirection.normalized * slideForce, ForceMode.Force);
     }
     // ---------------------- CROUCHING -------------------------- \\
-    private void startCrouch() {
-        toggleWalk();
-        Debug.Log("Crouching");
-    }
+    //private void startCrouch() {
+    //    toggleWalk();
+    //    Debug.Log("Crouching");
+    //}
 
     // ---------------------- CROUCHING -------------------------- \\
     private void toggleWalk() {
