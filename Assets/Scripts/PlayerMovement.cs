@@ -14,6 +14,9 @@ public class PlayerMovement : NetworkBehaviour
 
     [SerializeField] private float maxSlopeAngle;
 
+    [SerializeField] private float slideForce;
+    [SerializeField] private float minSlideVelocity;
+
     [Header("Player Inputs")]
     [SerializeField] private KeyCode sprint;
     [SerializeField] private KeyCode jump;
@@ -44,6 +47,8 @@ public class PlayerMovement : NetworkBehaviour
     private bool readyToJump;
     private bool exitingSlope;
 
+    private bool sliding;
+
     // Enums
     private movementState moveState;
 
@@ -54,6 +59,7 @@ public class PlayerMovement : NetworkBehaviour
         Walking,
         Sprinting,
         Crouching,
+        Sliding,
         WallRunning,
         Air
     }
@@ -105,31 +111,31 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     private void moveCharacterGround(Vector3 direction) {
-        // Crouch
-        if (moveState == movementState.Crouching) {
-            transform.localScale = new Vector3(transform.localScale.x, crouchYscale, transform.localScale.z);
-        } else {
-            transform.localScale = new Vector3(transform.localScale.x, startYscale, transform.localScale.z);
-        }
+        switch(moveState) {
+            case movementState.Crouching:
+                startCrouch();
+                break;
+            case movementState.Walking:
+                toggleWalk(); 
+                break;
+            case movementState.Sprinting:
+                toggleWalk();
+                break;
+            default:
+                airControl();
+                break;
 
+        }
         // On Slope
-        if(onSlope() && !exitingSlope) {
+        if (onSlope() && !exitingSlope) {
             rb.AddForce(GetSlopeDirection() * movementSpeed * 20f, ForceMode.Force);
             if (rb.linearVelocity.y > 0) {
                 rb.AddForce(Vector3.down * 80f, ForceMode.Force);
             }
         }
-        
         rb.useGravity = !onSlope();
-
-        // Normal Running/Sprinting
-        rb.AddForce(direction * movementSpeed * 10f, ForceMode.Force);
-        if (isGrounded) {
-            rb.linearDamping = groundDrag;
-        } else {
-            rb.linearDamping = 0;
-        }
         speedControl();
+        Debug.Log(rb.linearVelocity.y);
     }
 
     private void speedControl() {
@@ -146,6 +152,13 @@ public class PlayerMovement : NetworkBehaviour
             }
         }
     }
+
+    private void airControl() {
+        rb.AddForce(direction * movementSpeed * 10f, ForceMode.Force);
+        if(rb.linearVelocity.y < 0) {
+            rb.AddForce(new Vector3(0, rb.linearVelocity.y * 5.0f, 0));
+        }
+    }
     // ---------------------- JUMPING -------------------------- \\
 
     private void characterJump() {
@@ -157,7 +170,7 @@ public class PlayerMovement : NetworkBehaviour
     }
     private void jumpAction() {
         exitingSlope = true;
-        Debug.Log(exitingSlope);
+        //Debug.Log(exitingSlope);
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
@@ -165,6 +178,32 @@ public class PlayerMovement : NetworkBehaviour
         readyToJump = true;
         exitingSlope = false;
     }
+    // ---------------------- SLIDING -------------------------- \\
+    private void startSlide() {
+
+    }
+    private void slidingMovement() {
+
+    }
+    private void endSlide() {
+
+    }
+    // ---------------------- CROUCHING -------------------------- \\
+    private void startCrouch() {
+        Debug.Log("Crouching");
+    }
+
+    // ---------------------- CROUCHING -------------------------- \\
+    private void toggleWalk() {
+        // Normal Running/Sprinting
+        rb.AddForce(direction * movementSpeed * 10f, ForceMode.Force);
+        if (isGrounded) {
+            rb.linearDamping = groundDrag;
+        } else {
+            rb.linearDamping = 0;
+        }
+    }
+
     // ---------------------- MOVEMENT HELPER FUNCTIONS -------------------------- \\
 
     private void setGrounded() {
@@ -173,7 +212,7 @@ public class PlayerMovement : NetworkBehaviour
         } else {
             isGrounded = false;
         }
-        Debug.Log(isGrounded);
+        //Debug.Log(isGrounded);
     }
 
     private void getDirection() {
@@ -204,10 +243,14 @@ public class PlayerMovement : NetworkBehaviour
             // Sprinting
             moveState = movementState.Sprinting;
             movementSpeed = sprintingSpeed;
-        } else if(isGrounded && Input.GetKey(crouch)) {
-            // Crouching
-            moveState = movementState.Crouching;
-            movementSpeed = crouchSpeed;
+        } else if (isGrounded && Input.GetKey(crouch)) {
+            if (rb.linearVelocity.magnitude > minSlideVelocity) {
+                moveState = movementState.Sliding;
+            } else {
+                // Crouching
+                moveState = movementState.Crouching;
+                movementSpeed = crouchSpeed;
+            }
         } else if (isGrounded) {
             // Walking
             moveState = movementState.Walking;
@@ -216,8 +259,7 @@ public class PlayerMovement : NetworkBehaviour
             // In Air
             moveState = movementState.Air;
         }
-
-            //Debug.Log(moveState.ToString());
+        //Debug.Log(moveState.ToString());
     }
 
     // ---------------------- GETTERS AND SETTERS -------------------------- \\
