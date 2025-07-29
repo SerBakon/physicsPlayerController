@@ -110,14 +110,11 @@ public class PlayerMovement : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        characterMovement(direction);
+        moveCharacterGround(direction);
         //Debug.Log(rb.linearVelocity.magnitude);
     }
 
     // ---------------------- MOVEMENT -------------------------- \\
-    private void characterMovement(Vector3 direction) {
-        moveCharacterGround(direction);
-    }
 
     private void moveCharacterGround(Vector3 direction) {
         switch(moveState) {
@@ -188,8 +185,11 @@ public class PlayerMovement : NetworkBehaviour
     // ---------------------- SLIDING -------------------------- \\
     private void slidingMovement() {
         Vector3 inputDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-
-        rb.AddForce(inputDirection.normalized * slideForce, ForceMode.Force);
+        if(!onSlope() || rb.linearVelocity.y > -0.1f) {
+            rb.AddForce(inputDirection.normalized * slideForce, ForceMode.Force);
+        } else {
+            rb.AddForce(GetSlopeDirection() * slideForce, ForceMode.Force);
+        }
     }
     // ---------------------- CROUCHING -------------------------- \\
     //private void startCrouch() {
