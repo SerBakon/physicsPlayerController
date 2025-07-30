@@ -47,6 +47,8 @@ public class PlayerMovement : NetworkBehaviour
     private float horizontalInput;
     private float verticalInput;
 
+    private float currentSlideTime;
+
     // Vector3's
     private Vector3 direction;
 
@@ -71,6 +73,9 @@ public class PlayerMovement : NetworkBehaviour
     // Raycast
     private RaycastHit slopeHit;
 
+    // Script References
+    private CameraController camController;
+
     // ---------------------- START / UPDATE FUNCTIONS -------------------------- \\
     protected override void OnSpawned() {
         base.OnSpawned();
@@ -83,6 +88,7 @@ public class PlayerMovement : NetworkBehaviour
         walkingSpeed = movementSpeed;
         sprintingSpeed = movementSpeed * 1.5f;
         crouchSpeed = walkingSpeed * .5f;
+        camController = GetComponent<CameraController>();
         //startYscale = transform.localScale.y;
         rb = GetComponent<Rigidbody>();
         if (rb == null) {
@@ -103,7 +109,17 @@ public class PlayerMovement : NetworkBehaviour
 
         setGrounded();
 
+        // Update slide timer if we're sliding and not on a slope
+        if (moveState == movementState.Sliding && !onSlope()) {
+            currentSlideTime += Time.deltaTime;
+        }
+
         setState();
+
+        if (Input.GetKeyUp(crouch)) {
+            sliding = false;
+            currentSlideTime = 0f;
+        }
 
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
@@ -253,12 +269,25 @@ public class PlayerMovement : NetworkBehaviour
             movementSpeed = sprintingSpeed;
         } else if (isGrounded && Input.GetKey(crouch)) {
             if (rb.linearVelocity.magnitude > minSlideVelocity) {
-                // Sliding
-                moveState = movementState.Sliding;
+                // Start sliding only if we weren't already sliding
+                if (!sliding) {
+                    sliding = true;
+                    currentSlideTime = 0f;
+                }
+
+                // Continue sliding if we have time left or are on a slope
+                if (currentSlideTime < maxSlideTime) {
+                    moveState = movementState.Sliding;
+                } else {
+                    // Time expired - force crouch
+                    moveState = movementState.Crouching;
+                    movementSpeed = crouchSpeed;
+                }
             } else {
                 // Crouching
                 moveState = movementState.Crouching;
                 movementSpeed = crouchSpeed;
+                sliding = false;
             }
         } else if (isGrounded) {
             // Walking

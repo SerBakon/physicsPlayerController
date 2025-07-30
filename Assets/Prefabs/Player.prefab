@@ -2700,6 +2700,7 @@ MonoBehaviour:
   maxSlopeAngle: 60
   slideForce: 200
   minSlideVelocity: 6
+  maxSlideTime: 1
   sprint: 304
   jump: 32
   crouch: 306
