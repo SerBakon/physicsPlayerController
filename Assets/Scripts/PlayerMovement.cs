@@ -17,6 +17,7 @@ public class PlayerMovement : NetworkBehaviour
 
     [SerializeField] private float slideForce;
     [SerializeField] private float minSlideVelocity;
+    [SerializeField] private float maxSlideTime;
 
     [Header("Player Inputs")]
     [SerializeField] private KeyCode sprint;
@@ -57,9 +58,6 @@ public class PlayerMovement : NetworkBehaviour
 
     // Enums
     private movementState moveState;
-
-    // Raycast
-    private RaycastHit slopeHit;
     private enum movementState {
         Idle,
         Walking,
@@ -69,6 +67,8 @@ public class PlayerMovement : NetworkBehaviour
         WallRunning,
         Air
     }
+    // Raycast
+    private RaycastHit slopeHit;
 
     // ---------------------- START / UPDATE FUNCTIONS -------------------------- \\
     protected override void OnSpawned() {
@@ -82,7 +82,7 @@ public class PlayerMovement : NetworkBehaviour
         walkingSpeed = movementSpeed;
         sprintingSpeed = movementSpeed * 1.5f;
         crouchSpeed = walkingSpeed * .5f;
-        startYscale = transform.localScale.y;
+        //startYscale = transform.localScale.y;
         rb = GetComponent<Rigidbody>();
         if (rb == null) {
             Debug.LogError("No RigidBody Found!");
@@ -184,9 +184,8 @@ public class PlayerMovement : NetworkBehaviour
     }
     // ---------------------- SLIDING -------------------------- \\
     private void slidingMovement() {
-        Vector3 inputDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
         if(!onSlope() || rb.linearVelocity.y > -0.1f) {
-            rb.AddForce(inputDirection.normalized * slideForce, ForceMode.Force);
+            rb.AddForce(direction.normalized * slideForce, ForceMode.Force);
         } else {
             rb.AddForce(GetSlopeDirection() * slideForce, ForceMode.Force);
         }
@@ -197,7 +196,7 @@ public class PlayerMovement : NetworkBehaviour
     //    Debug.Log("Crouching");
     //}
 
-    // ---------------------- CROUCHING -------------------------- \\
+    // ---------------------- WALKING / SPRINT -------------------------- \\
     private void toggleWalk() {
         // Normal Running/Sprinting
         rb.AddForce(direction * movementSpeed * 10f, ForceMode.Force);
@@ -253,6 +252,7 @@ public class PlayerMovement : NetworkBehaviour
             movementSpeed = sprintingSpeed;
         } else if (isGrounded && Input.GetKey(crouch)) {
             if (rb.linearVelocity.magnitude > minSlideVelocity) {
+                // Sliding
                 moveState = movementState.Sliding;
             } else {
                 // Crouching
