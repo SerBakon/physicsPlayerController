@@ -15,7 +15,6 @@ public class CameraController : NetworkBehaviour
     private float rotX, rotY;
     private float xMin, xMax;
 
-
     // Script Calls
 
     //private PlayerMovement playerMovement;
@@ -30,12 +29,6 @@ public class CameraController : NetworkBehaviour
 
     void Start()
     {
-        //if (isOwner) {
-        //    playerCam = transform.GetChild(1).GetComponent<Camera>();
-        //} else {
-        //    playerCam.enabled = false;
-        //}
-
         if (playerCam == null) {
             Debug.LogWarning("No Camera Found!");
         }

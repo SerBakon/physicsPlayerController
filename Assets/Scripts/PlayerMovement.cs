@@ -73,6 +73,9 @@ public class PlayerMovement : NetworkBehaviour
     // Raycast
     private RaycastHit slopeHit;
 
+    // Script References
+    private CameraController camController;
+
     // ---------------------- START / UPDATE FUNCTIONS -------------------------- \\
     protected override void OnSpawned() {
         base.OnSpawned();
@@ -85,6 +88,7 @@ public class PlayerMovement : NetworkBehaviour
         walkingSpeed = movementSpeed;
         sprintingSpeed = movementSpeed * 1.5f;
         crouchSpeed = walkingSpeed * .5f;
+        camController = GetComponent<CameraController>();
         //startYscale = transform.localScale.y;
         rb = GetComponent<Rigidbody>();
         if (rb == null) {
@@ -272,7 +276,7 @@ public class PlayerMovement : NetworkBehaviour
                 }
 
                 // Continue sliding if we have time left or are on a slope
-                if (currentSlideTime < maxSlideTime || onSlope()) {
+                if (currentSlideTime < maxSlideTime) {
                     moveState = movementState.Sliding;
                 } else {
                     // Time expired - force crouch
