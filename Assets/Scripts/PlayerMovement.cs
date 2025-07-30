@@ -119,6 +119,12 @@ public class PlayerMovement : NetworkBehaviour
         if (Input.GetKeyUp(crouch)) {
             sliding = false;
             currentSlideTime = 0f;
+
+            camController.setCamPos(camController.originalCamPos);
+        }
+
+        if (Input.GetKeyDown(crouch)) {
+            camController.setCamPos(camController.originalCamPos + new Vector3(0, -0.5f, 0));
         }
 
         horizontalInput = Input.GetAxis("Horizontal");

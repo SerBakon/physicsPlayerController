@@ -15,6 +15,8 @@ public class CameraController : NetworkBehaviour
     private float rotX, rotY;
     private float xMin, xMax;
 
+    private Vector3 originalPos;
+
     // Script Calls
 
     //private PlayerMovement playerMovement;
@@ -29,6 +31,8 @@ public class CameraController : NetworkBehaviour
 
     void Start()
     {
+        originalPos = playerCam.transform.localPosition;
+
         if (playerCam == null) {
             Debug.LogWarning("No Camera Found!");
         }
@@ -45,6 +49,8 @@ public class CameraController : NetworkBehaviour
     {
         setRotations();
         turnCamera();
+
+        //Debug.Log(originalPos);
     }
 
     private void setRotations() {
@@ -57,5 +63,13 @@ public class CameraController : NetworkBehaviour
     private void turnCamera() {
         transform.rotation = Quaternion.Euler(0, rotY, 0);
         playerCam.transform.rotation = Quaternion.Euler(-rotX, rotY, 0);
+    }
+
+    public void setCamPos(Vector3 pos) {
+        playerCam.transform.localPosition = pos;
+    }
+
+    public Vector3 originalCamPos {
+        get { return originalPos; }
     }
 }
