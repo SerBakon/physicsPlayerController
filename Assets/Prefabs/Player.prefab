@@ -2699,6 +2699,7 @@ MonoBehaviour:
   crouchYscale: 0.5
   maxSlopeAngle: 60
   slideForce: 200
+  slideSpeed: 30
   minSlideVelocity: 6
   maxSlideTime: 1
   sprint: 304
