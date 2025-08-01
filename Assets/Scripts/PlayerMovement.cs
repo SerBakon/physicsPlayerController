@@ -123,11 +123,16 @@ public class PlayerMovement : NetworkBehaviour {
             sliding = false;
             currentSlideTime = 0f;
 
-            camController.setCamPos(camController.originalCamPos);
+            raiseCam();
         }
 
-        if (Input.GetKeyDown(crouch)) {
-            camController.setCamPos(camController.originalCamPos + new Vector3(0, -0.5f, 0));
+        if (Input.GetKey(crouch)) {
+            lowerCam();
+        }
+
+        // Cannot get smaller hitbox by holding jump and crouch
+        if (Input.GetKey(jump)) {
+            raiseCam();
         }
 
         horizontalInput = Input.GetAxis("Horizontal");
@@ -164,11 +169,7 @@ public class PlayerMovement : NetworkBehaviour {
         rb.useGravity = !onSlope();
 
         speedControl();
-        //if (!onSlope() || moveState != movementState.Sliding) {
-        //    speedControl();
-        //}
 
-        // On slope and sliding => !onslope or !sliding
         //Debug.Log(rb.linearVelocity.y);
     }
 
@@ -215,6 +216,9 @@ public class PlayerMovement : NetworkBehaviour {
     }
     // ---------------------- SLIDING -------------------------- \\
     private void slidingMovement() {
+        // Cannot get Extra MoveSpeed by holding jump and slide
+        //if (Input.GetKey(jump)) return;
+
         if(!onSlope() || rb.linearVelocity.y > -0.1f) {
             desiredMoveSpeed = sprintingSpeed;
             rb.AddForce(direction.normalized * slideForce, ForceMode.Force);
@@ -228,6 +232,14 @@ public class PlayerMovement : NetworkBehaviour {
     //    toggleWalk();
     //    Debug.Log("Crouching");
     //}
+
+    private void lowerCam() {
+        camController.setCamPos(camController.originalCamPos + new Vector3(0, -0.5f, 0));
+    }
+    private void raiseCam() {
+        camController.setCamPos(camController.originalCamPos);
+
+    }
 
     // ---------------------- WALKING / SPRINT -------------------------- \\
     private void toggleWalk() {
