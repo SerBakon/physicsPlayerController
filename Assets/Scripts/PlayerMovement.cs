@@ -1,9 +1,9 @@
 using PurrNet;
+using System.Collections;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class PlayerMovement : NetworkBehaviour
-{
+public class PlayerMovement : NetworkBehaviour {
     // git branch test
     [Header("Movement")]
     [SerializeField] private float movementSpeed;
@@ -17,6 +17,7 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] private float maxSlopeAngle;
 
     [SerializeField] private float slideForce;
+    [SerializeField] private float slideSpeed;
     [SerializeField] private float minSlideVelocity;
     [SerializeField] private float maxSlideTime;
 
@@ -48,6 +49,9 @@ public class PlayerMovement : NetworkBehaviour
     private float verticalInput;
 
     private float currentSlideTime;
+
+    private float desiredMoveSpeed;
+    private float lastDesiredMoveSpeed;
 
     // Vector3's
     private Vector3 direction;
@@ -98,8 +102,7 @@ public class PlayerMovement : NetworkBehaviour
 
         moveState = movementState.Idle;
     }
-    private void Start()
-    {
+    private void Start() {
         setValues();
     }
     private void Update() {
@@ -131,8 +134,7 @@ public class PlayerMovement : NetworkBehaviour
         verticalInput = Input.GetAxis("Vertical");
     }
 
-    private void FixedUpdate()
-    {
+    private void FixedUpdate() {
         moveCharacterGround(direction);
         //Debug.Log(rb.linearVelocity.magnitude);
     }
@@ -140,7 +142,7 @@ public class PlayerMovement : NetworkBehaviour
     // ---------------------- MOVEMENT -------------------------- \\
 
     private void moveCharacterGround(Vector3 direction) {
-        switch(moveState) {
+        switch (moveState) {
             case movementState.Air:
                 airControl();
                 break;
@@ -160,7 +162,13 @@ public class PlayerMovement : NetworkBehaviour
             }
         }
         rb.useGravity = !onSlope();
+
         speedControl();
+        //if (!onSlope() || moveState != movementState.Sliding) {
+        //    speedControl();
+        //}
+
+        // On slope and sliding => !onslope or !sliding
         //Debug.Log(rb.linearVelocity.y);
     }
 
@@ -208,8 +216,10 @@ public class PlayerMovement : NetworkBehaviour
     // ---------------------- SLIDING -------------------------- \\
     private void slidingMovement() {
         if(!onSlope() || rb.linearVelocity.y > -0.1f) {
+            desiredMoveSpeed = sprintingSpeed;
             rb.AddForce(direction.normalized * slideForce, ForceMode.Force);
         } else {
+            desiredMoveSpeed = slideSpeed;
             rb.AddForce(GetSlopeDirection() * slideForce, ForceMode.Force);
         }
     }
@@ -231,6 +241,18 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     // ---------------------- MOVEMENT HELPER FUNCTIONS -------------------------- \\
+    private IEnumerator smoothlyLerpSpeed() {
+        float time = 0;
+        float difference = Mathf.Abs(desiredMoveSpeed - movementSpeed);
+        float startVal = movementSpeed;
+
+        while (time < difference) {
+            movementSpeed = Mathf.Lerp(startVal, desiredMoveSpeed, (time / difference) * 5f);
+            time += Time.deltaTime;
+            yield return null;
+        }
+        movementSpeed = desiredMoveSpeed;
+    }
 
     private void setGrounded() {
         if (Physics.CheckSphere(feetPos.position, .15f, groundLayer)) {
@@ -272,7 +294,7 @@ public class PlayerMovement : NetworkBehaviour
         if (isGrounded && Input.GetKey(sprint) && !Input.GetKey(crouch)) {
             // Sprinting
             moveState = movementState.Sprinting;
-            movementSpeed = sprintingSpeed;
+            desiredMoveSpeed = sprintingSpeed;
         } else if (isGrounded && Input.GetKey(crouch)) {
             if (rb.linearVelocity.magnitude > minSlideVelocity) {
                 // Start sliding only if we weren't already sliding
@@ -287,22 +309,29 @@ public class PlayerMovement : NetworkBehaviour
                 } else {
                     // Time expired - force crouch
                     moveState = movementState.Crouching;
-                    movementSpeed = crouchSpeed;
+                    desiredMoveSpeed = crouchSpeed;
                 }
             } else {
                 // Crouching
                 moveState = movementState.Crouching;
-                movementSpeed = crouchSpeed;
+                desiredMoveSpeed = crouchSpeed;
                 sliding = false;
             }
         } else if (isGrounded) {
             // Walking
             moveState = movementState.Walking;
-            movementSpeed = walkingSpeed;
+            desiredMoveSpeed = walkingSpeed;
         } else {
             // In Air
             moveState = movementState.Air;
         }
+        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 4f && movementSpeed != 0) {
+            StopAllCoroutines();
+            StartCoroutine(smoothlyLerpSpeed());
+        } else {
+            movementSpeed = desiredMoveSpeed;
+        }
+            lastDesiredMoveSpeed = desiredMoveSpeed;
         Debug.Log(moveState.ToString());
     }
 
