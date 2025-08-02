@@ -2704,6 +2704,7 @@ MonoBehaviour:
   maxSlideTime: 0.75
   wallRunForce: 200
   wallCheckDistance: 0.7
+  wallClimbSpeed: 5
   sprint: 304
   jump: 32
   crouch: 306

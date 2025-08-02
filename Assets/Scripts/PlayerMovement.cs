@@ -23,6 +23,7 @@ public class PlayerMovement : NetworkBehaviour {
 
     [SerializeField] private float wallRunForce;
     [SerializeField] private float wallCheckDistance;
+    [SerializeField] private float wallClimbSpeed;
 
     [Header("Player Inputs")]
     [SerializeField] private KeyCode sprint;
@@ -278,6 +279,11 @@ public class PlayerMovement : NetworkBehaviour {
         }
 
         rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+
+        //Scale up the wall by how far up the camera faces and fixes falling problem
+        float scalingPercent = camController.getRotX / 90f;
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, (wallClimbSpeed * scalingPercent) + .2f, rb.linearVelocity.z);
+
 
         if (!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput < 0)) {
             rb.AddForce(-wallNormal * 100, ForceMode.Force);

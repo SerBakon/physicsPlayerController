@@ -72,4 +72,8 @@ public class CameraController : NetworkBehaviour
     public Vector3 originalCamPos {
         get { return originalPos; }
     }
+
+    public float getRotX {
+        get { return rotX; }
+    }
 }
