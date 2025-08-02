@@ -149,6 +149,10 @@ public class PlayerMovement : NetworkBehaviour {
     // ---------------------- MOVEMENT -------------------------- \\
 
     private void moveCharacterGround(Vector3 direction) {
+        if (rb.linearVelocity.y > 0 && onSlope() && moveState == movementState.Sliding) {
+            moveState = movementState.Crouching;
+            Debug.Log("Do not slide up slopes");
+        }
         switch (moveState) {
             case movementState.Air:
                 airControl();
@@ -161,6 +165,8 @@ public class PlayerMovement : NetworkBehaviour {
                 break;
 
         }
+        Debug.Log(moveState.ToString());
+
         // On Slope
         if (onSlope() && !exitingSlope) {
             rb.AddForce(GetSlopeDirection() * movementSpeed * 20f, ForceMode.Force);
@@ -225,9 +231,7 @@ public class PlayerMovement : NetworkBehaviour {
         } else {
             desiredMoveSpeed = slideSpeed;
             // Cannot Slide up slopes
-            if(!(rb.linearVelocity.y > 0)) {
-                rb.AddForce(GetSlopeDirection() * slideForce, ForceMode.Force);
-            }
+            rb.AddForce(GetSlopeDirection() * slideForce, ForceMode.Force);
         }
     }
     // ---------------------- CROUCHING -------------------------- \\
@@ -346,8 +350,7 @@ public class PlayerMovement : NetworkBehaviour {
         } else {
             movementSpeed = desiredMoveSpeed;
         }
-            lastDesiredMoveSpeed = desiredMoveSpeed;
-        Debug.Log(moveState.ToString());
+        lastDesiredMoveSpeed = desiredMoveSpeed;
     }
 
     // ---------------------- GETTERS AND SETTERS -------------------------- \\
