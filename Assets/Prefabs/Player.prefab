@@ -2695,7 +2695,7 @@ MonoBehaviour:
   _visitiblityRules: {fileID: 0}
   movementSpeed: 5
   jumpForce: 5
-  jumpCD: 0
+  jumpCD: 0.5
   groundDrag: 3
   crouchYscale: 0.5
   maxSlopeAngle: 60
