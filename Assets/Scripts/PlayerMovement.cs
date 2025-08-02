@@ -346,7 +346,7 @@ public class PlayerMovement : NetworkBehaviour {
 
     private void setState() {
         // Set Modes
-        if((wallLeft || wallRight) && !isGrounded && verticalInput > 0) {
+        if((wallLeft || wallRight) && verticalInput > 0) {
             // Wall Running
             moveState = movementState.WallRunning;
             desiredMoveSpeed = wallrunSpeed;
@@ -391,7 +391,7 @@ public class PlayerMovement : NetworkBehaviour {
             movementSpeed = desiredMoveSpeed;
         }
             lastDesiredMoveSpeed = desiredMoveSpeed;
-        Debug.Log(moveState.ToString());
+        //Debug.Log(moveState.ToString());
     }
 
     // ---------------------- GETTERS AND SETTERS -------------------------- \\
