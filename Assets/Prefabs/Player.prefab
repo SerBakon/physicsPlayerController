@@ -2702,6 +2702,8 @@ MonoBehaviour:
   slideSpeed: 30
   minSlideVelocity: 6
   maxSlideTime: 0.75
+  wallRunForce: 200
+  wallCheckDistance: 0.7
   sprint: 304
   jump: 32
   crouch: 306
@@ -2710,6 +2712,9 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!114 &7112267929212435386
 MonoBehaviour:
   m_ObjectHideFlags: 0
