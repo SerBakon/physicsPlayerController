@@ -21,6 +21,10 @@ public class PlayerMovement : NetworkBehaviour {
     [SerializeField] private float minSlideVelocity;
     [SerializeField] private float maxSlideTime;
 
+    [SerializeField] private float wallRunForce;
+    [SerializeField] private float wallCheckDistance;
+    [SerializeField] private float wallClimbSpeed;
+
     [Header("Player Inputs")]
     [SerializeField] private KeyCode sprint;
     [SerializeField] private KeyCode jump;
@@ -34,6 +38,7 @@ public class PlayerMovement : NetworkBehaviour {
 
     [Header("Layers")]
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask wallLayer;
 
     // Private variables
     private Rigidbody rb;
@@ -41,6 +46,7 @@ public class PlayerMovement : NetworkBehaviour {
     // Floats
     private float walkingSpeed;
     private float sprintingSpeed;
+    private float wallrunSpeed;
 
     private float crouchSpeed;
     private float startYscale;
@@ -63,6 +69,9 @@ public class PlayerMovement : NetworkBehaviour {
 
     private bool sliding;
 
+    private bool wallLeft;
+    private bool wallRight;
+
     // Enums
     private movementState moveState;
     private enum movementState {
@@ -76,6 +85,9 @@ public class PlayerMovement : NetworkBehaviour {
     }
     // Raycast
     private RaycastHit slopeHit;
+
+    private RaycastHit leftWallHit;
+    private RaycastHit rightWallHit;
 
     // Script References
     private CameraController camController;
@@ -92,6 +104,7 @@ public class PlayerMovement : NetworkBehaviour {
         walkingSpeed = movementSpeed;
         sprintingSpeed = movementSpeed * 1.5f;
         crouchSpeed = walkingSpeed * .5f;
+        wallrunSpeed = walkingSpeed * 2f;
         camController = GetComponent<CameraController>();
         //startYscale = transform.localScale.y;
         rb = GetComponent<Rigidbody>();
@@ -111,6 +124,8 @@ public class PlayerMovement : NetworkBehaviour {
         characterJump();
 
         setGrounded();
+
+        checkWall();
 
         // Update slide timer if we're sliding and not on a slope
         if (moveState == movementState.Sliding && !onSlope()) {
@@ -159,6 +174,9 @@ public class PlayerMovement : NetworkBehaviour {
                 break;
             case movementState.Sliding:
                 slidingMovement();
+                break;
+            case movementState.WallRunning:
+                wallrunMovement();
                 break;
             default:
                 toggleWalk();
@@ -247,6 +265,34 @@ public class PlayerMovement : NetworkBehaviour {
         camController.setCamPos(camController.originalCamPos);
 
     }
+    // ---------------------- WALLRUNNING -------------------------- \\
+    private void checkWall() {
+        wallRight = Physics.Raycast(transform.position, orientation.right, out rightWallHit, wallCheckDistance, wallLayer);
+        wallLeft = Physics.Raycast(transform.position, -orientation.right, out leftWallHit, wallCheckDistance, wallLayer);
+    }
+    private void wallrunMovement() {
+        rb.useGravity = false;
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+        Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
+
+        Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
+
+        if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude) {
+            wallForward = -wallForward;
+        }
+
+        rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+
+        //Scale up the wall by how far up the camera faces and fixes falling problem
+        float scalingPercent = camController.getRotX / 90f;
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, (wallClimbSpeed * scalingPercent) + .2f, rb.linearVelocity.z);
+
+
+        if (!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput < 0)) {
+            rb.AddForce(-wallNormal * 100, ForceMode.Force);
+        }
+    }
 
     // ---------------------- WALKING / SPRINT -------------------------- \\
     private void toggleWalk() {
@@ -310,7 +356,11 @@ public class PlayerMovement : NetworkBehaviour {
 
     private void setState() {
         // Set Modes
-        if (isGrounded && Input.GetKey(sprint) && !Input.GetKey(crouch)) {
+        if((wallLeft || wallRight) && verticalInput > 0) {
+            // Wall Running
+            moveState = movementState.WallRunning;
+            desiredMoveSpeed = wallrunSpeed;
+        } else if (isGrounded && Input.GetKey(sprint) && !Input.GetKey(crouch)) {
             // Sprinting
             moveState = movementState.Sprinting;
             desiredMoveSpeed = sprintingSpeed;
