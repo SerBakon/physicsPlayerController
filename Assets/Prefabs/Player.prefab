@@ -2701,7 +2701,7 @@ MonoBehaviour:
   slideForce: 200
   slideSpeed: 30
   minSlideVelocity: 6
-  maxSlideTime: 1
+  maxSlideTime: 0.75
   sprint: 304
   jump: 32
   crouch: 306

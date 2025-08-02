@@ -137,6 +137,8 @@ public class PlayerMovement : NetworkBehaviour {
 
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
+
+        //Debug.Log(rb.linearVelocity.y);
     }
 
     private void FixedUpdate() {
@@ -216,15 +218,16 @@ public class PlayerMovement : NetworkBehaviour {
     }
     // ---------------------- SLIDING -------------------------- \\
     private void slidingMovement() {
-        // Cannot get Extra MoveSpeed by holding jump and slide
-        //if (Input.GetKey(jump)) return;
 
         if(!onSlope() || rb.linearVelocity.y > -0.1f) {
             desiredMoveSpeed = sprintingSpeed;
             rb.AddForce(direction.normalized * slideForce, ForceMode.Force);
         } else {
             desiredMoveSpeed = slideSpeed;
-            rb.AddForce(GetSlopeDirection() * slideForce, ForceMode.Force);
+            // Cannot Slide up slopes
+            if(!(rb.linearVelocity.y > 0)) {
+                rb.AddForce(GetSlopeDirection() * slideForce, ForceMode.Force);
+            }
         }
     }
     // ---------------------- CROUCHING -------------------------- \\
