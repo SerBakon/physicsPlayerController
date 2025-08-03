@@ -1,10 +1,12 @@
 using PurrNet;
+using System.Collections;
 using System.Globalization;
 using UnityEngine;
 
 public class CameraController : NetworkBehaviour
 {
     [Header("Camera")]
+    [SerializeField] private Transform camHolder;
     [SerializeField] private Camera playerCam;
 
     [Header("Sensitivity")]
@@ -14,6 +16,8 @@ public class CameraController : NetworkBehaviour
 
     private float rotX, rotY;
     private float xMin, xMax;
+
+    private float desiredFOV;
 
     private Vector3 originalPos;
 
@@ -31,7 +35,7 @@ public class CameraController : NetworkBehaviour
 
     void Start()
     {
-        originalPos = playerCam.transform.localPosition;
+        originalPos = camHolder.transform.localPosition;
 
         if (playerCam == null) {
             Debug.LogWarning("No Camera Found!");
@@ -62,11 +66,55 @@ public class CameraController : NetworkBehaviour
 
     private void turnCamera() {
         transform.rotation = Quaternion.Euler(0, rotY, 0);
-        playerCam.transform.rotation = Quaternion.Euler(-rotX, rotY, 0);
+        camHolder.transform.rotation = Quaternion.Euler(-rotX, rotY, 0);
     }
 
     public void setCamPos(Vector3 pos) {
-        playerCam.transform.localPosition = pos;
+        camHolder.transform.localPosition = pos;
+    }
+    public void setCamFOV(float fov, float time) {
+        desiredFOV = fov;
+        StartCoroutine(lerpCamFOV(desiredFOV, time));
+    }
+    public void setCamTilt(float angle, float time) {
+        Debug.Log(playerCam.transform.localEulerAngles);
+        StartCoroutine(lerpCamAngle(angle, time));
+    }
+    private IEnumerator lerpCamAngle(float desiredAngle, float duration) {
+        //float duration = 0.5f; // You might want to make this a parameter or class variable
+        Debug.Log("you should only see this once");
+        float time = 0;
+        float startValue = playerCam.transform.localEulerAngles.z;
+
+        while (time < duration) {
+            float newAngle = Mathf.LerpAngle(startValue, desiredAngle, time / duration);
+            playerCam.transform.localEulerAngles = new Vector3(
+                playerCam.transform.localEulerAngles.x,
+                playerCam.transform.localEulerAngles.z,
+                newAngle
+            );
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure final angle is exact
+        playerCam.transform.localEulerAngles = new Vector3(
+            playerCam.transform.localEulerAngles.x,
+            playerCam.transform.localEulerAngles.y,
+            desiredAngle
+        );
+    }
+    private IEnumerator lerpCamFOV(float desiredFOV, float duration) {
+        float time = 0;
+        float startValue = playerCam.fieldOfView;
+
+        while (time < duration) {
+            playerCam.fieldOfView = Mathf.Lerp(startValue, desiredFOV, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        playerCam.fieldOfView = desiredFOV; // Ensure exact value at the end
     }
 
     public Vector3 originalCamPos {
@@ -75,5 +123,9 @@ public class CameraController : NetworkBehaviour
 
     public float getRotX {
         get { return rotX; }
+    }
+
+    public float fov {
+        get { return desiredFOV; }
     }
 }

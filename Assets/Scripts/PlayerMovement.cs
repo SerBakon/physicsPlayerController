@@ -169,6 +169,21 @@ public class PlayerMovement : NetworkBehaviour {
             }
         }
 
+        if ((wallRight || wallLeft) && camController.fov != 90 && !exitingWall) {
+            //Debug.Log("FOV to 90");
+            if (wallLeft) camController.setCamTilt(-5f, .2f);
+            if (wallRight) camController.setCamTilt(5f, .2f);
+            camController.setCamFOV(90f, 0.2f);
+        }
+        
+        if (!wallRight && !wallLeft && camController.fov == 90) {
+            //Debug.Log("FOV to 60");
+            camController.StopAllCoroutines();
+            camController.setCamFOV(60f, 0.2f);
+            camController.setCamTilt(0f, .2f);
+        }
+        //Debug.Log((wallRight || wallLeft) + " " + (!wallRight && !wallLeft));
+
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
 
@@ -177,6 +192,7 @@ public class PlayerMovement : NetworkBehaviour {
 
     private void FixedUpdate() {
         moveCharacterGround(direction);
+        
         //Debug.Log(rb.linearVelocity.magnitude);
     }
 
@@ -187,6 +203,7 @@ public class PlayerMovement : NetworkBehaviour {
             moveState = movementState.Crouching;
             Debug.Log("Do not slide up slopes");
         }
+        
         switch (moveState) {
             case movementState.Air:
                 airControl();
@@ -293,6 +310,8 @@ public class PlayerMovement : NetworkBehaviour {
         if (!exitingWall) {
             rb.useGravity = false;
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+            //camController.setCamFOV(90f, 0.3f);
 
             Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
 
