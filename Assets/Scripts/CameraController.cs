@@ -5,6 +5,7 @@ using UnityEngine;
 public class CameraController : NetworkBehaviour
 {
     [Header("Camera")]
+    [SerializeField] private Transform camHolder;
     [SerializeField] private Camera playerCam;
 
     [Header("Sensitivity")]
