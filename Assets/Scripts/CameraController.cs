@@ -81,8 +81,6 @@ public class CameraController : NetworkBehaviour
         StartCoroutine(lerpCamAngle(angle, time));
     }
     private IEnumerator lerpCamAngle(float desiredAngle, float duration) {
-        //float duration = 0.5f; // You might want to make this a parameter or class variable
-        Debug.Log("you should only see this once");
         float time = 0;
         float startValue = playerCam.transform.localEulerAngles.z;
 
@@ -114,7 +112,7 @@ public class CameraController : NetworkBehaviour
             yield return null;
         }
 
-        playerCam.fieldOfView = desiredFOV; // Ensure exact value at the end
+        playerCam.fieldOfView = desiredFOV;
     }
 
     public Vector3 originalCamPos {

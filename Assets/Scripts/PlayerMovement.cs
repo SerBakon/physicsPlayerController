@@ -303,8 +303,8 @@ public class PlayerMovement : NetworkBehaviour {
     }
     // ---------------------- WALLRUNNING -------------------------- \\
     private void checkWall() {
-        wallRight = Physics.Raycast(transform.position, orientation.right, out rightWallHit, wallCheckDistance, wallLayer);
-        wallLeft = Physics.Raycast(transform.position, -orientation.right, out leftWallHit, wallCheckDistance, wallLayer);
+        wallRight = Physics.Raycast(orientation.transform.position, orientation.right, out rightWallHit, wallCheckDistance, wallLayer);
+        wallLeft = Physics.Raycast(orientation.transform.position, -orientation.right, out leftWallHit, wallCheckDistance, wallLayer);
     }
     private void wallrunMovement() {
         if (!exitingWall) {
