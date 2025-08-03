@@ -356,7 +356,7 @@ public class PlayerMovement : NetworkBehaviour {
 
     private void setState() {
         // Set Modes
-        if((wallLeft || wallRight) && verticalInput > 0) {
+        if((wallLeft || wallRight) && verticalInput > 0 && !isGrounded) {
             // Wall Running
             moveState = movementState.WallRunning;
             desiredMoveSpeed = wallrunSpeed;

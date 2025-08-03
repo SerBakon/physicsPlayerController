@@ -2716,7 +2716,7 @@ MonoBehaviour:
     m_Bits: 64
   wallLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 64
 --- !u!114 &7112267929212435386
 MonoBehaviour:
   m_ObjectHideFlags: 0
