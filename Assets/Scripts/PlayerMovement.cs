@@ -24,6 +24,9 @@ public class PlayerMovement : NetworkBehaviour {
     [SerializeField] private float wallRunForce;
     [SerializeField] private float wallCheckDistance;
     [SerializeField] private float wallClimbSpeed;
+    [SerializeField] private float wallJumpForce;
+    [SerializeField] private float wallJumpSideForce;
+    [SerializeField] private float exitWallTime;
 
     [Header("Player Inputs")]
     [SerializeField] private KeyCode sprint;
@@ -59,6 +62,8 @@ public class PlayerMovement : NetworkBehaviour {
     private float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
 
+    private float exitWallTimer;
+
     // Vector3's
     private Vector3 direction;
 
@@ -71,6 +76,7 @@ public class PlayerMovement : NetworkBehaviour {
 
     private bool wallLeft;
     private bool wallRight;
+    private bool exitingWall;
 
     // Enums
     private movementState moveState;
@@ -146,8 +152,21 @@ public class PlayerMovement : NetworkBehaviour {
         }
 
         // Cannot get smaller hitbox by holding jump and crouch
-        if (Input.GetKey(jump)) {
+        if (Input.GetKey(jump) && moveState != movementState.WallRunning) {
             raiseCam();
+        }
+
+        if (Input.GetKeyDown(jump) && moveState == movementState.WallRunning) {
+            wallJump();
+            Debug.Log("attempting wall jump");
+        }
+        if (exitingWall) {
+            if(exitWallTimer > 0) {
+                exitWallTimer -= Time.deltaTime;
+            }
+            if (exitWallTimer <= 0) {
+                exitingWall = false;
+            }
         }
 
         horizontalInput = Input.GetAxis("Horizontal");
@@ -183,7 +202,7 @@ public class PlayerMovement : NetworkBehaviour {
                 break;
 
         }
-        Debug.Log(moveState.ToString());
+        //Debug.Log(moveState.ToString());
 
         // On Slope
         if (onSlope() && !exitingSlope) {
@@ -271,27 +290,39 @@ public class PlayerMovement : NetworkBehaviour {
         wallLeft = Physics.Raycast(transform.position, -orientation.right, out leftWallHit, wallCheckDistance, wallLayer);
     }
     private void wallrunMovement() {
-        rb.useGravity = false;
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        if (!exitingWall) {
+            rb.useGravity = false;
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
+            Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
+
+            Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
+
+            if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude) {
+                wallForward = -wallForward;
+            }
+
+            rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+
+            //Scale up the wall by how far up the camera faces and fixes falling problem
+            float scalingPercent = camController.getRotX / 90f;
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, (wallClimbSpeed * scalingPercent) + .2f, rb.linearVelocity.z);
+
+
+            if (!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput < 0)) {
+                rb.AddForce(-wallNormal * 100, ForceMode.Force);
+            }
+        }
+    }
+    private void wallJump() {
+        exitingWall = true;
+        exitWallTimer = exitWallTime;
         Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
 
-        Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
+        Vector3 wallJumpApply = (transform.up * wallJumpForce) + (wallNormal * wallJumpSideForce);
 
-        if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude) {
-            wallForward = -wallForward;
-        }
-
-        rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
-
-        //Scale up the wall by how far up the camera faces and fixes falling problem
-        float scalingPercent = camController.getRotX / 90f;
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, (wallClimbSpeed * scalingPercent) + .2f, rb.linearVelocity.z);
-
-
-        if (!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput < 0)) {
-            rb.AddForce(-wallNormal * 100, ForceMode.Force);
-        }
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.AddForce(wallJumpApply, ForceMode.Impulse);
     }
 
     // ---------------------- WALKING / SPRINT -------------------------- \\

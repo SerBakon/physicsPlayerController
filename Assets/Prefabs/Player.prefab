@@ -2706,6 +2706,9 @@ MonoBehaviour:
   wallRunForce: 200
   wallCheckDistance: 0.7
   wallClimbSpeed: 5
+  wallJumpForce: 7
+  wallJumpSideForce: 12
+  exitWallTime: 0.2
   sprint: 304
   jump: 32
   crouch: 306
