@@ -30,6 +30,13 @@ public class PlayerMovement : NetworkBehaviour {
     [SerializeField] private float wallJumpSideForce;
     [SerializeField] private float exitWallTime;
 
+    [Header("Climbing")]
+    [SerializeField] private float climbSpeed;
+    [SerializeField] private float detectionLength;
+    [SerializeField] private float sphereCastRadius;
+    [SerializeField] private float maxWallLookAngle;
+
+
     [Header("Player Inputs")]
     [SerializeField] private KeyCode sprint;
     [SerializeField] private KeyCode jump;
@@ -66,6 +73,8 @@ public class PlayerMovement : NetworkBehaviour {
 
     private float exitWallTimer;
 
+    private float wallLookAngle;
+
     // Vector3's
     private Vector3 direction;
 
@@ -80,6 +89,8 @@ public class PlayerMovement : NetworkBehaviour {
     private bool wallRight;
     private bool exitingWall;
 
+    private bool wallFront;
+
     // Enums
     private movementState moveState;
     private enum movementState {
@@ -89,6 +100,7 @@ public class PlayerMovement : NetworkBehaviour {
         Crouching,
         Sliding,
         WallRunning,
+        Climbing,
         Air
     }
     // Raycast
@@ -96,6 +108,8 @@ public class PlayerMovement : NetworkBehaviour {
 
     private RaycastHit leftWallHit;
     private RaycastHit rightWallHit;
+
+    private RaycastHit frontWallHit;
 
     // Script References
     private CameraController camController;
