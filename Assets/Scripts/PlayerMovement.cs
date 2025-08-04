@@ -1,6 +1,6 @@
 using PurrNet;
 using System.Collections;
-using UnityEditor.Experimental.GraphView;
+//using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PlayerMovement : NetworkBehaviour {
@@ -16,17 +16,26 @@ public class PlayerMovement : NetworkBehaviour {
 
     [SerializeField] private float maxSlopeAngle;
 
+    [Header("Sliding")]
     [SerializeField] private float slideForce;
     [SerializeField] private float slideSpeed;
     [SerializeField] private float minSlideVelocity;
     [SerializeField] private float maxSlideTime;
 
+    [Header("WallRun")]
     [SerializeField] private float wallRunForce;
     [SerializeField] private float wallCheckDistance;
     [SerializeField] private float wallClimbSpeed;
     [SerializeField] private float wallJumpForce;
     [SerializeField] private float wallJumpSideForce;
     [SerializeField] private float exitWallTime;
+
+    [Header("Climbing")]
+    [SerializeField] private float climbSpeed;
+    [SerializeField] private float detectionLength;
+    [SerializeField] private float sphereCastRadius;
+    [SerializeField] private float maxWallLookAngle;
+
 
     [Header("Player Inputs")]
     [SerializeField] private KeyCode sprint;
@@ -64,6 +73,8 @@ public class PlayerMovement : NetworkBehaviour {
 
     private float exitWallTimer;
 
+    private float wallLookAngle;
+
     // Vector3's
     private Vector3 direction;
 
@@ -78,6 +89,8 @@ public class PlayerMovement : NetworkBehaviour {
     private bool wallRight;
     private bool exitingWall;
 
+    private bool wallFront;
+
     // Enums
     private movementState moveState;
     private enum movementState {
@@ -87,6 +100,7 @@ public class PlayerMovement : NetworkBehaviour {
         Crouching,
         Sliding,
         WallRunning,
+        Climbing,
         Air
     }
     // Raycast
@@ -94,6 +108,8 @@ public class PlayerMovement : NetworkBehaviour {
 
     private RaycastHit leftWallHit;
     private RaycastHit rightWallHit;
+
+    private RaycastHit frontWallHit;
 
     // Script References
     private CameraController camController;
@@ -131,7 +147,11 @@ public class PlayerMovement : NetworkBehaviour {
 
         setGrounded();
 
+        //wallrunning
         checkWall();
+
+        //climbing
+        wallCheck();
 
         // Update slide timer if we're sliding and not on a slope
         if (moveState == movementState.Sliding && !onSlope()) {
@@ -214,12 +234,16 @@ public class PlayerMovement : NetworkBehaviour {
             case movementState.WallRunning:
                 wallrunMovement();
                 break;
+            case movementState.Climbing:
+                climbingMovement();
+                break;
             default:
                 toggleWalk();
                 break;
 
         }
         //Debug.Log(moveState.ToString());
+        Debug.Log(wallFront);
 
         // On Slope
         if (onSlope() && !exitingSlope) {
@@ -303,8 +327,8 @@ public class PlayerMovement : NetworkBehaviour {
     }
     // ---------------------- WALLRUNNING -------------------------- \\
     private void checkWall() {
-        wallRight = Physics.Raycast(transform.position, orientation.right, out rightWallHit, wallCheckDistance, wallLayer);
-        wallLeft = Physics.Raycast(transform.position, -orientation.right, out leftWallHit, wallCheckDistance, wallLayer);
+        wallRight = Physics.Raycast(orientation.transform.position, orientation.right, out rightWallHit, wallCheckDistance, wallLayer);
+        wallLeft = Physics.Raycast(orientation.transform.position, -orientation.right, out leftWallHit, wallCheckDistance, wallLayer);
     }
     private void wallrunMovement() {
         if (!exitingWall) {
@@ -342,6 +366,15 @@ public class PlayerMovement : NetworkBehaviour {
 
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(wallJumpApply, ForceMode.Impulse);
+    }
+    // ---------------------- CLIMBING -------------------------- \\
+    private void wallCheck() {
+        wallFront = Physics.SphereCast(transform.position, sphereCastRadius, orientation.forward, out frontWallHit, detectionLength, wallLayer);
+        wallLookAngle = Vector3.Angle(orientation.forward, -frontWallHit.normal);
+    }
+
+    private void climbingMovement() {
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, climbSpeed, rb.linearVelocity.z);
     }
 
     // ---------------------- WALKING / SPRINT -------------------------- \\
@@ -406,10 +439,13 @@ public class PlayerMovement : NetworkBehaviour {
 
     private void setState() {
         // Set Modes
-        if((wallLeft || wallRight) && verticalInput > 0 && !isGrounded) {
+        if ((wallLeft || wallRight) && verticalInput > 0 && !isGrounded) {
             // Wall Running
             moveState = movementState.WallRunning;
             desiredMoveSpeed = wallrunSpeed;
+        } else if (wallFront && !isGrounded && Input.GetKey(KeyCode.W)){
+            // Climbing
+            moveState = movementState.Climbing;
         } else if (isGrounded && Input.GetKey(sprint) && !Input.GetKey(crouch)) {
             // Sprinting
             moveState = movementState.Sprinting;
@@ -464,5 +500,14 @@ public class PlayerMovement : NetworkBehaviour {
         // Draws the isGrounded check
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(feetPos.position, 0.15f);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(orientation.transform.position, sphereCastRadius);
+
+        // Calculate end position of the sphere cast
+        Vector3 endPosition = orientation.transform.position + transform.forward * detectionLength;
+
+        // Draw the end sphere
+        Gizmos.DrawWireSphere(endPosition, sphereCastRadius);
     }
 }
