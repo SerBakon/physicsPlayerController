@@ -1,6 +1,6 @@
 using PurrNet;
 using System.Collections;
-using UnityEditor.Experimental.GraphView;
+//using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PlayerMovement : NetworkBehaviour {
@@ -16,11 +16,13 @@ public class PlayerMovement : NetworkBehaviour {
 
     [SerializeField] private float maxSlopeAngle;
 
+    [Header("Sliding")]
     [SerializeField] private float slideForce;
     [SerializeField] private float slideSpeed;
     [SerializeField] private float minSlideVelocity;
     [SerializeField] private float maxSlideTime;
 
+    [Header("WallRun")]
     [SerializeField] private float wallRunForce;
     [SerializeField] private float wallCheckDistance;
     [SerializeField] private float wallClimbSpeed;
