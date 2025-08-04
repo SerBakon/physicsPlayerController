@@ -2709,6 +2709,10 @@ MonoBehaviour:
   wallJumpForce: 7
   wallJumpSideForce: 12
   exitWallTime: 0.3
+  climbSpeed: 7
+  detectionLength: 0.7
+  sphereCastRadius: 0.2
+  maxWallLookAngle: 30
   sprint: 304
   jump: 32
   crouch: 306

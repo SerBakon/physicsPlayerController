@@ -147,7 +147,11 @@ public class PlayerMovement : NetworkBehaviour {
 
         setGrounded();
 
+        //wallrunning
         checkWall();
+
+        //climbing
+        wallCheck();
 
         // Update slide timer if we're sliding and not on a slope
         if (moveState == movementState.Sliding && !onSlope()) {
@@ -230,12 +234,16 @@ public class PlayerMovement : NetworkBehaviour {
             case movementState.WallRunning:
                 wallrunMovement();
                 break;
+            case movementState.Climbing:
+                climbingMovement();
+                break;
             default:
                 toggleWalk();
                 break;
 
         }
         //Debug.Log(moveState.ToString());
+        Debug.Log(wallFront);
 
         // On Slope
         if (onSlope() && !exitingSlope) {
@@ -359,6 +367,15 @@ public class PlayerMovement : NetworkBehaviour {
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(wallJumpApply, ForceMode.Impulse);
     }
+    // ---------------------- CLIMBING -------------------------- \\
+    private void wallCheck() {
+        wallFront = Physics.SphereCast(transform.position, sphereCastRadius, orientation.forward, out frontWallHit, detectionLength, wallLayer);
+        wallLookAngle = Vector3.Angle(orientation.forward, -frontWallHit.normal);
+    }
+
+    private void climbingMovement() {
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, climbSpeed, rb.linearVelocity.z);
+    }
 
     // ---------------------- WALKING / SPRINT -------------------------- \\
     private void toggleWalk() {
@@ -422,10 +439,13 @@ public class PlayerMovement : NetworkBehaviour {
 
     private void setState() {
         // Set Modes
-        if((wallLeft || wallRight) && verticalInput > 0 && !isGrounded) {
+        if ((wallLeft || wallRight) && verticalInput > 0 && !isGrounded) {
             // Wall Running
             moveState = movementState.WallRunning;
             desiredMoveSpeed = wallrunSpeed;
+        } else if (wallFront && !isGrounded && Input.GetKey(KeyCode.W)){
+            // Climbing
+            moveState = movementState.Climbing;
         } else if (isGrounded && Input.GetKey(sprint) && !Input.GetKey(crouch)) {
             // Sprinting
             moveState = movementState.Sprinting;
@@ -480,5 +500,14 @@ public class PlayerMovement : NetworkBehaviour {
         // Draws the isGrounded check
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(feetPos.position, 0.15f);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(orientation.transform.position, sphereCastRadius);
+
+        // Calculate end position of the sphere cast
+        Vector3 endPosition = orientation.transform.position + transform.forward * detectionLength;
+
+        // Draw the end sphere
+        Gizmos.DrawWireSphere(endPosition, sphereCastRadius);
     }
 }
