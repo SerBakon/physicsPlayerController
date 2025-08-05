@@ -15,6 +15,7 @@ public class AnimationController : NetworkBehaviour
 
 
     private RaycastHit slopeHit;
+    private string currentAnim;
     protected override void OnSpawned() {
         base.OnSpawned();
 
@@ -34,7 +35,7 @@ public class AnimationController : NetworkBehaviour
                     setWalking();
                     break;
                 case PlayerMovement.movementState.Sliding:
-                    animator.Play("Slide");
+                    changeAnimation("Slide");
                     break;
                 case PlayerMovement.movementState.Crouching:
                     setCrouching();
@@ -43,13 +44,13 @@ public class AnimationController : NetworkBehaviour
                     setSprint();
                     break;
                 case PlayerMovement.movementState.Air:
-                    animator.Play("InAir");
+                    changeAnimation("InAir");
                     break;
                 case PlayerMovement.movementState.Climbing:
-                    animator.Play("Climbing");
+                    changeAnimation("Climbing");
                     break;
                 default:
-                    animator.Play("Rifle Idle");
+                    changeAnimation("Rifle Idle");
                     break;
             }
         } else if(onSlope() && isOwner) {
@@ -59,41 +60,51 @@ public class AnimationController : NetworkBehaviour
 
     private void setCrouching() {
         if (Input.GetKey(KeyCode.W)) {
-            animator.Play("Crouch Walking");
+            changeAnimation("Crouch Walking");
+            //changeAnimation("Crouch Walking");
         } else if (Input.GetKey(KeyCode.S)) {
-            animator.Play("Walk Crouching Backward");
+            changeAnimation("Walk Crouching Backward");
+            //changeAnimation("Walk Crouching Backward");
         } else if (Input.GetKey(KeyCode.A)) {
-            animator.Play("Walk Crouching Left");
+            changeAnimation("Walk Crouching Left");
+            //changeAnimation("Walk Crouching Left");
         } else if (Input.GetKey(KeyCode.D)) {
-            animator.Play("Walk Crouching Right");
+            changeAnimation("Walk Crouching Right");
+            //changeAnimation("Walk Crouching Right");
         } else {
-            animator.Play("Crouch Idle");
+            changeAnimation("Crouch Idle");
+            //changeAnimation("Crouch Idle");
         }
     }
     private void setSprint() {
         if (Input.GetKey(KeyCode.W)) {
-            animator.Play("Sprint Forward");
+            changeAnimation("Sprint Forward");
+            //changeAnimation("Sprint Forward");
         } else if (Input.GetKey(KeyCode.S)) {
-            animator.Play("Sprint Backward");
+            changeAnimation("Sprint Backward");
+            //changeAnimation("Sprint Backward");
         } else if (Input.GetKey(KeyCode.A)) {
-            animator.Play("Sprint Left");
+            changeAnimation("Sprint Left");
+            //changeAnimation("Sprint Left");
         } else if (Input.GetKey(KeyCode.D)) {
-            animator.Play("Sprint Right");
+            changeAnimation("Sprint Right");
+            //changeAnimation("Sprint Right");
         } else {
-            animator.Play("Rifle Idle");
+            changeAnimation("Rifle Idle");
+            //changeAnimation("Rifle Idle");
         }
     }
     private void setWalking() {
         if (Input.GetKey(KeyCode.W)) {
-            animator.Play("Walking");
+            changeAnimation("Walking");
         } else if (Input.GetKey(KeyCode.S)) {
-            animator.Play("Walking Backwards");
+            changeAnimation("Walking Backwards");
         } else if (Input.GetKey(KeyCode.A)) {
-            animator.Play("Walk Left");
+            changeAnimation("Walk Left");
         } else if (Input.GetKey(KeyCode.D)) {
-            animator.Play("Walk Right");
+            changeAnimation("Walk Right");
         } else {
-            animator.Play("Rifle Idle");
+            changeAnimation("Rifle Idle");
         }
     }
 
@@ -106,14 +117,19 @@ public class AnimationController : NetworkBehaviour
                 setWalking();
                 break;
             case PlayerMovement.movementState.Sliding:
-                animator.Play("Slide");
+                changeAnimation("Slide");
                 break;
             default:
                 setSprint();
                 break;
         }
     }
-
+    private void changeAnimation(string animation, float crossfade = 0.05f) {
+        if (currentAnim != animation) {
+            currentAnim = animation;
+            animator.CrossFade(animation, crossfade);
+        }
+    }
     private bool onSlope() {
 
         if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, Mathf.Infinity)) {
