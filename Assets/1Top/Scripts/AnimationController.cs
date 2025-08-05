@@ -38,6 +38,9 @@ public class AnimationController : NetworkBehaviour
                 case PlayerMovement.movementState.Crouching:
                     setCrouching();
                     break;
+                case PlayerMovement.movementState.WallRunning:
+                    setSprint();
+                    break;
                 default:
                     animator.Play("Rifle Idle");
                     break;
