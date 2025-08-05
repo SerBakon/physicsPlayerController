@@ -35,6 +35,9 @@ public class AnimationController : NetworkBehaviour
                 case PlayerMovement.movementState.Sliding:
                     animator.Play("Slide");
                     break;
+                case PlayerMovement.movementState.Crouching:
+                    setCrouching();
+                    break;
                 default:
                     animator.Play("Rifle Idle");
                     break;
@@ -44,6 +47,19 @@ public class AnimationController : NetworkBehaviour
         }
     }
 
+    private void setCrouching() {
+        if (Input.GetKey(KeyCode.W)) {
+            animator.Play("Crouch Walking");
+        } else if (Input.GetKey(KeyCode.S)) {
+            animator.Play("Walk Crouching Backward");
+        } else if (Input.GetKey(KeyCode.A)) {
+            animator.Play("Walk Crouching Left");
+        } else if (Input.GetKey(KeyCode.D)) {
+            animator.Play("Walk Crouching Right");
+        } else {
+            animator.Play("Crouch Idle");
+        }
+    }
     private void setSprint() {
         if (Input.GetKey(KeyCode.W)) {
             animator.Play("Sprint Forward");
