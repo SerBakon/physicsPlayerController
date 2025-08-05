@@ -40,7 +40,7 @@ public class AnimationController : NetworkBehaviour
                     break;
             }
         } else {
-            //slopeAnim();
+            slopeAnim();
         }
     }
 
