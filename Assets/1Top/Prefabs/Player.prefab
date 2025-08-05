@@ -1439,6 +1439,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1538068926525204358}
   - component: {fileID: 8856005136987225888}
+  - component: {fileID: 2226286125543563059}
   m_Layer: 0
   m_Name: Armature
   m_TagString: Untagged
@@ -1473,10 +1474,10 @@ Animator:
   m_GameObject: {fileID: 4662319006082646542}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 36078ab0369161e49a29d349ae3e0739, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2ba4642d009899e4c91e3b3f94d8b998, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -1485,6 +1486,31 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2226286125543563059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4662319006082646542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7b598b9d8509d64abb9fdaf07fa3f6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _animator: {fileID: 8856005136987225888}
+  _ownerAuth: 1
+  _autoSyncParameters: 1
+  _dontSyncParameters: []
 --- !u!1 &4802219575864485578
 GameObject:
   m_ObjectHideFlags: 0
@@ -2748,6 +2774,7 @@ MonoBehaviour:
   camHolder: {fileID: 918847132975878775}
   playerCam: {fileID: 1952093748499295673}
   sens: 5
+  head: {fileID: 4608416159262951292}
 --- !u!114 &457928307676346827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2769,7 +2796,9 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  playerPrefab: {fileID: 4662319006082646542}
+  playerPrefab: {fileID: 7542312553677115914}
+  animator: {fileID: 2226286125543563059}
+  PlayerMovement: {fileID: 2424666542689755602}
 --- !u!54 &460574196708701015
 Rigidbody:
   m_ObjectHideFlags: 0

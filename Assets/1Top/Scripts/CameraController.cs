@@ -12,6 +12,9 @@ public class CameraController : NetworkBehaviour
     [Header("Sensitivity")]
     [SerializeField] private float sens;
 
+    [Header("GameObjects")]
+    [SerializeField] private GameObject head;
+
     // Privates
 
     private float rotX, rotY;
@@ -53,6 +56,7 @@ public class CameraController : NetworkBehaviour
     {
         setRotations();
         turnCamera();
+
 
         //Debug.Log(originalPos);
     }
