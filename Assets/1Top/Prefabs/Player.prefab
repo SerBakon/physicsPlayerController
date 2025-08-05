@@ -1477,7 +1477,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 2ba4642d009899e4c91e3b3f94d8b998, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -1509,7 +1509,7 @@ MonoBehaviour:
   _visitiblityRules: {fileID: 0}
   _animator: {fileID: 8856005136987225888}
   _ownerAuth: 1
-  _autoSyncParameters: 0
+  _autoSyncParameters: 1
   _dontSyncParameters: []
 --- !u!1 &4802219575864485578
 GameObject:
@@ -2796,7 +2796,7 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   playerPrefab: {fileID: 4662319006082646542}
-  animator: {fileID: 8856005136987225888}
+  animator: {fileID: 2226286125543563059}
   PlayerMovement: {fileID: 2424666542689755602}
 --- !u!54 &460574196708701015
 Rigidbody:

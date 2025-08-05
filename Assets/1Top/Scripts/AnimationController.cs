@@ -7,7 +7,7 @@ public class AnimationController : NetworkBehaviour
     [SerializeField] private GameObject playerPrefab;
 
     [Header("Animation")]
-    [SerializeField] private Animator animator;
+    [SerializeField] private NetworkAnimator animator;
 
     [Header("Scripts")]
     [SerializeField] private PlayerMovement PlayerMovement;
@@ -23,9 +23,20 @@ public class AnimationController : NetworkBehaviour
 
     private void Update() {
         switch (PlayerMovement.state) {
-            case PlayerMovement.movementState.Air:
-
+            case PlayerMovement.movementState.Sprinting:
+                setSprint();
                 break;
+            default:
+                animator.Play("Rifle Idle");
+                break;
+        }
+    }
+
+    private void setSprint() {
+        if (Input.GetKey(KeyCode.W)) {
+            animator.Play("Sprint Forward");
+        } else if (Input.GetKey(KeyCode.S)) {
+            animator.Play("Sprint Backward");
         }
     }
 
