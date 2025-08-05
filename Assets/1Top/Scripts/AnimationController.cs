@@ -15,6 +15,7 @@ public class AnimationController : NetworkBehaviour
 
 
     private RaycastHit slopeHit;
+    private string currentAnim;
     protected override void OnSpawned() {
         base.OnSpawned();
 
@@ -59,28 +60,38 @@ public class AnimationController : NetworkBehaviour
 
     private void setCrouching() {
         if (Input.GetKey(KeyCode.W)) {
-            animator.Play("Crouch Walking");
+            changeAnimation("Crouch Walking");
+            //animator.Play("Crouch Walking");
         } else if (Input.GetKey(KeyCode.S)) {
-            animator.Play("Walk Crouching Backward");
+            changeAnimation("Walk Crouching Backward");
+            //animator.Play("Walk Crouching Backward");
         } else if (Input.GetKey(KeyCode.A)) {
-            animator.Play("Walk Crouching Left");
+            changeAnimation("Walk Crouching Left");
+            //animator.Play("Walk Crouching Left");
         } else if (Input.GetKey(KeyCode.D)) {
-            animator.Play("Walk Crouching Right");
+            changeAnimation("Walk Crouching Right");
+            //animator.Play("Walk Crouching Right");
         } else {
-            animator.Play("Crouch Idle");
+            changeAnimation("Crouch Idle");
+            //animator.Play("Crouch Idle");
         }
     }
     private void setSprint() {
         if (Input.GetKey(KeyCode.W)) {
-            animator.Play("Sprint Forward");
+            changeAnimation("Sprint Forward");
+            //animator.Play("Sprint Forward");
         } else if (Input.GetKey(KeyCode.S)) {
-            animator.Play("Sprint Backward");
+            changeAnimation("Sprint Backward");
+            //animator.Play("Sprint Backward");
         } else if (Input.GetKey(KeyCode.A)) {
-            animator.Play("Sprint Left");
+            changeAnimation("Sprint Left");
+            //animator.Play("Sprint Left");
         } else if (Input.GetKey(KeyCode.D)) {
-            animator.Play("Sprint Right");
+            changeAnimation("Sprint Right");
+            //animator.Play("Sprint Right");
         } else {
-            animator.Play("Rifle Idle");
+            changeAnimation("Rifle Idle");
+            //animator.Play("Rifle Idle");
         }
     }
     private void setWalking() {
@@ -113,7 +124,12 @@ public class AnimationController : NetworkBehaviour
                 break;
         }
     }
-
+    private void changeAnimation(string animation, float crossfade = 0.2f) {
+        if (currentAnim != animation) {
+            currentAnim = animation;
+            animator.CrossFade(animation, crossfade);
+        }
+    }
     private bool onSlope() {
 
         if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, Mathf.Infinity)) {
