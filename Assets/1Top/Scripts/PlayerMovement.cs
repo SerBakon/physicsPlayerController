@@ -93,7 +93,7 @@ public class PlayerMovement : NetworkBehaviour {
 
     // Enums
     private movementState moveState;
-    private enum movementState {
+    public enum movementState {
         Idle,
         Walking,
         Sprinting,
@@ -243,7 +243,7 @@ public class PlayerMovement : NetworkBehaviour {
 
         }
         //Debug.Log(moveState.ToString());
-        Debug.Log(wallFront);
+        //Debug.Log(wallFront);
 
         // On Slope
         if (onSlope() && !exitingSlope) {
@@ -493,6 +493,10 @@ public class PlayerMovement : NetworkBehaviour {
 
     public float Velocity {
         get { return rb.linearVelocity.magnitude; }
+    }
+
+    public movementState state {
+        get { return moveState; }
     }
 
     // ---------------------- DEBUG GIZMOS -------------------------- \\
