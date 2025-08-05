@@ -242,8 +242,9 @@ public class PlayerMovement : NetworkBehaviour {
                 break;
 
         }
-        //Debug.Log(moveState.ToString());
+        Debug.Log(moveState.ToString());
         //Debug.Log(wallFront);
+        //Debug.Log(onSlope());
 
         // On Slope
         if (onSlope() && !exitingSlope) {
@@ -369,8 +370,12 @@ public class PlayerMovement : NetworkBehaviour {
     }
     // ---------------------- CLIMBING -------------------------- \\
     private void wallCheck() {
-        wallFront = Physics.SphereCast(transform.position, sphereCastRadius, orientation.forward, out frontWallHit, detectionLength, wallLayer);
-        wallLookAngle = Vector3.Angle(orientation.forward, -frontWallHit.normal);
+        //wallFront = Physics.SphereCast(transform.position, sphereCastRadius, orientation.forward, out frontWallHit, detectionLength, wallLayer);
+        wallFront = Physics.Raycast(transform.position, orientation.forward, out frontWallHit, detectionLength, wallLayer);
+        wallLookAngle = Vector3.Angle(Vector3.up, frontWallHit.normal);
+
+        if (wallLookAngle != 90) wallFront = false;
+        //Debug.Log(wallLookAngle);
     }
 
     private void climbingMovement() {

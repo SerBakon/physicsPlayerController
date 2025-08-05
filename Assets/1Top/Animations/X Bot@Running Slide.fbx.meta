@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c2b75d9fae4701c459c56a3c85bf01d5
+guid: bca9823d9f292de44b3731c8a61cacc7
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -31,11 +31,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Sprint Forward
+      name: Running Slide
       takeName: mixamo.com
       internalID: -203655887218126122
       firstFrame: 0
-      lastFrame: 15
+      lastFrame: 46
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

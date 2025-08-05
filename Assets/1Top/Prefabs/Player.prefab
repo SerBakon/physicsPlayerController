@@ -2774,6 +2774,7 @@ MonoBehaviour:
   camHolder: {fileID: 918847132975878775}
   playerCam: {fileID: 1952093748499295673}
   sens: 5
+  head: {fileID: 4608416159262951292}
 --- !u!114 &457928307676346827
 MonoBehaviour:
   m_ObjectHideFlags: 0
