@@ -443,7 +443,7 @@ public class PlayerMovement : NetworkBehaviour {
             // Wall Running
             moveState = movementState.WallRunning;
             desiredMoveSpeed = wallrunSpeed;
-        } else if (wallFront && !isGrounded && Input.GetKey(KeyCode.W)){
+        } else if (wallFront && Input.GetKey(KeyCode.W)){
             // Climbing
             moveState = movementState.Climbing;
         } else if (isGrounded && Input.GetKey(sprint) && !Input.GetKey(crouch)) {
