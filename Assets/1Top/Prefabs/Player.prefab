@@ -2796,7 +2796,7 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  playerPrefab: {fileID: 4662319006082646542}
+  playerPrefab: {fileID: 7542312553677115914}
   animator: {fileID: 2226286125543563059}
   PlayerMovement: {fileID: 2424666542689755602}
 --- !u!54 &460574196708701015

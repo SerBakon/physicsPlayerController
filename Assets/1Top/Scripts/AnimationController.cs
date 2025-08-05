@@ -1,6 +1,7 @@
 using PurrNet;
 using System.Globalization;
 using UnityEngine;
+
 public class AnimationController : NetworkBehaviour 
 {
     [Header("Gameobjects")]
@@ -19,12 +20,12 @@ public class AnimationController : NetworkBehaviour
 
         enabled = isOwner;
 
-        //playerPrefab.gameObject.SetActive(!isOwner);
-        //Debug.Log("Removing gameobject complete");
+        playerPrefab.gameObject.SetActive(!isOwner);
+        Debug.Log("Removing gameobject complete");        
     }
 
     private void Update() {
-        if(!onSlope()) {
+        if (!onSlope() && isOwner) {
             switch (PlayerMovement.state) {
                 case PlayerMovement.movementState.Sprinting:
                     setSprint();
@@ -45,7 +46,7 @@ public class AnimationController : NetworkBehaviour
                     animator.Play("Rifle Idle");
                     break;
             }
-        } else {
+        } else if(onSlope() && isOwner) {
             slopeAnim();
         }
     }
