@@ -42,6 +42,12 @@ public class AnimationController : NetworkBehaviour
                 case PlayerMovement.movementState.WallRunning:
                     setSprint();
                     break;
+                case PlayerMovement.movementState.Air:
+                    animator.Play("InAir");
+                    break;
+                case PlayerMovement.movementState.Climbing:
+                    animator.Play("Climbing");
+                    break;
                 default:
                     animator.Play("Rifle Idle");
                     break;
