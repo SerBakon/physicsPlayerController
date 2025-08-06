@@ -113,12 +113,23 @@ public class PlayerMovement : NetworkBehaviour {
 
     // Script References
     private CameraController camController;
+    [SerializeField] private CanvasController canvasController;
 
     // ---------------------- START / UPDATE FUNCTIONS -------------------------- \\
     protected override void OnSpawned() {
         base.OnSpawned();
 
         enabled = isOwner;
+        canvasController = GameObject.Find("Canvas").GetComponent<CanvasController>();
+        if(isOwner) {
+            InstanceHandler.RegisterInstance(this);
+            canvasController.setMovementScript();
+        }
+            
+    }
+
+    private void OnDespawned() {
+        InstanceHandler.UnregisterInstance<PlayerMovement>();
     }
 
     private void setValues() {

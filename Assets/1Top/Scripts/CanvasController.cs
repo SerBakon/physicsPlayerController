@@ -2,8 +2,7 @@ using PurrNet;
 using TMPro;
 using UnityEngine;
 
-public class CanvasController : MonoBehaviour
-{
+public class CanvasController : MonoBehaviour {
     [Header("Texts")]
     [SerializeField] private TextMeshProUGUI velocityText;
 
@@ -22,5 +21,9 @@ public class CanvasController : MonoBehaviour
             velocity = Mathf.Floor(velocity * 10f) / 10f;
         }
         velocityText.text = "Velocity: " + velocity;
+    }
+
+    public void setMovementScript() {
+        playerMovement = InstanceHandler.GetInstance<PlayerMovement>();
     }
 }
