@@ -510,6 +510,9 @@ public class PlayerMovement : NetworkBehaviour {
     public float Velocity {
         get { return rb.linearVelocity.magnitude; }
     }
+    public float VelocityY {
+        get { return rb.linearVelocity.y; }
+    }
 
     public movementState state {
         get { return moveState; }

@@ -109,6 +109,10 @@ public class AnimationController : NetworkBehaviour
     }
 
     private void slopeAnim() {
+        if(PlayerMovement.VelocityY > 0) {
+            setSprint();
+            return;
+        }
         switch (PlayerMovement.state) {
             case PlayerMovement.movementState.Sprinting:
                 setSprint();
@@ -118,6 +122,9 @@ public class AnimationController : NetworkBehaviour
                 break;
             case PlayerMovement.movementState.Sliding:
                 changeAnimation("Slide");
+                break;
+            case PlayerMovement.movementState.Crouching:
+                changeAnimation("Crouch Idle");
                 break;
             default:
                 setSprint();
