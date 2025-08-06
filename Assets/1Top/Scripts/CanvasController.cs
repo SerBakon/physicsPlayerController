@@ -9,8 +9,30 @@ public class CanvasController : MonoBehaviour {
     [Header("Scripts")]
     [SerializeField] private PlayerMovement playerMovement;
 
+    [Header("Canvas Groups")]
+    [SerializeField] private CanvasGroup gameView;
+    [SerializeField] private CanvasGroup menuView;
+
+    private bool showMenu = false;
+
+    private void Start() {
+        menuView.alpha = 0;
+    }
     private void Update() {
+        if (Input.GetKeyDown(KeyCode.M)) {
+            toggleView();
+        }
         displayVelocity();
+    }
+    private void toggleView() {
+        if (showMenu) {
+            gameView.alpha = 0;
+            menuView.alpha = 1;
+        } else {
+            gameView.alpha = 1;
+            menuView.alpha = 0;
+        }
+        showMenu = !showMenu;
     }
 
     private void displayVelocity() {
