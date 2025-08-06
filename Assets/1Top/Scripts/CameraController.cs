@@ -15,6 +15,8 @@ public class CameraController : NetworkBehaviour
     [Header("GameObjects")]
     [SerializeField] private GameObject head;
 
+    [Header("Scripts")]
+    [SerializeField] private CanvasController canvasController;
     // Privates
 
     private float rotX, rotY;
@@ -33,7 +35,16 @@ public class CameraController : NetworkBehaviour
 
         enabled = isOwner;
 
+        canvasController = GameObject.Find("Canvas").GetComponent<CanvasController>();
+
+        InstanceHandler.RegisterInstance(this);
+        canvasController.setCameraScript();
+
         playerCam.gameObject.SetActive(isOwner);
+    }
+
+    private void OnDespawned() {
+        InstanceHandler.UnregisterInstance<PlayerMovement>();
     }
 
     void Start()
@@ -129,5 +140,10 @@ public class CameraController : NetworkBehaviour
 
     public float fov {
         get { return desiredFOV; }
+    }
+
+    public float sensitivity {
+        get { return sens; }
+        set { sens = value; }
     }
 }

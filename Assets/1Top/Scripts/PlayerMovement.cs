@@ -253,7 +253,7 @@ public class PlayerMovement : NetworkBehaviour {
                 break;
 
         }
-        Debug.Log(moveState.ToString());
+        //Debug.Log(moveState.ToString());
         //Debug.Log(wallFront);
         //Debug.Log(onSlope());
 
