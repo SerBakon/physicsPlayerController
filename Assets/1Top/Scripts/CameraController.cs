@@ -43,7 +43,7 @@ public class CameraController : NetworkBehaviour
         playerCam.gameObject.SetActive(isOwner);
     }
 
-    private void OnDespawned() {
+    protected override void OnDespawned() {
         InstanceHandler.UnregisterInstance<PlayerMovement>();
     }
 

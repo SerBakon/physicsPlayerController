@@ -128,7 +128,7 @@ public class PlayerMovement : NetworkBehaviour {
             
     }
 
-    private void OnDespawned() {
+    protected override void OnDespawned() {
         InstanceHandler.UnregisterInstance<PlayerMovement>();
     }
 
