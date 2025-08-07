@@ -42,9 +42,9 @@ public class DevConnectionStarter : MonoBehaviour
     private void startNormal() {
         _networkManager.transport = transform.GetComponent<UDPTransport>();
 
-        //if (!ParrelSync.ClonesManager.IsClone())
-        //    _networkManager.StartServer();
-        _networkManager.StartServer();
+        if (!ParrelSync.ClonesManager.IsClone())
+            _networkManager.StartServer();
+        //_networkManager.StartServer();
         _networkManager.StartClient();
     }
 
