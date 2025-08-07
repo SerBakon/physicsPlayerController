@@ -33,19 +33,19 @@ public class DevConnectionStarter : MonoBehaviour
         if (isFromlobby) {
             startFromLobby();
         } else {
-            startNormal();
+            //startNormal();
         }
 
         
     }
 
-    private void startNormal() {
-        _networkManager.transport = transform.GetComponent<UDPTransport>();
+    //private void startNormal() {
+    //    _networkManager.transport = transform.GetComponent<UDPTransport>();
 
-        if(!ParrelSync.ClonesManager.IsClone())
-            _networkManager.StartServer();
-        _networkManager.StartClient();
-    }
+    //    if(!ParrelSync.ClonesManager.IsClone())
+    //        _networkManager.StartServer();
+    //    _networkManager.StartClient();
+    //}
 
     private void startFromLobby() {
         _networkManager.transport = transform.GetComponent<PurrTransport>();

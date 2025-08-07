@@ -998,7 +998,7 @@ GameObject:
   - component: {fileID: 496322911}
   - component: {fileID: 496322910}
   - component: {fileID: 496322908}
-  - component: {fileID: 496322912}
+  - component: {fileID: 496322914}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -1097,7 +1097,7 @@ MonoBehaviour:
   _address: 127.0.0.1
   _timeoutInSeconds: 5
   _pollEventsInUpdate: 0
---- !u!114 &496322912
+--- !u!114 &496322914
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
