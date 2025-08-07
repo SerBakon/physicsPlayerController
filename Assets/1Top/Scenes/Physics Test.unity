@@ -440,6 +440,7 @@ MonoBehaviour:
   gameView: {fileID: 1681518975}
   menuView: {fileID: 393442777}
   sensitivitySlider: {fileID: 874497545}
+  referencedScripts: 0
 --- !u!114 &228543485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -997,7 +998,6 @@ GameObject:
   - component: {fileID: 496322911}
   - component: {fileID: 496322910}
   - component: {fileID: 496322908}
-  - component: {fileID: 496322909}
   - component: {fileID: 496322912}
   m_Layer: 0
   m_Name: NetworkManager
@@ -1063,18 +1063,6 @@ MonoBehaviour:
   _ignoreNetworkRules: 0
   spawnPoints:
   - {fileID: 257335638}
---- !u!114 &496322909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 496322904}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5c476fd9733ed148b4631bd99c76108, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &496322910
 MonoBehaviour:
   m_ObjectHideFlags: 0

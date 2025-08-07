@@ -124,6 +124,8 @@ public class PlayerMovement : NetworkBehaviour {
         if(isOwner) {
             InstanceHandler.RegisterInstance(this);
             canvasController.setMovementScript();
+            setValues();
+            canvasController.referencedScripts = true;
         }
             
     }
@@ -148,9 +150,9 @@ public class PlayerMovement : NetworkBehaviour {
 
         moveState = movementState.Idle;
     }
-    private void Start() {
-        setValues();
-    }
+    //private void Start() {
+    //    setValues();
+    //}
     private void Update() {
         getDirection();
 

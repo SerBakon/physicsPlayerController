@@ -20,17 +20,20 @@ public class CanvasController : MonoBehaviour {
     [SerializeField] private Slider sensitivitySlider;
 
     private bool showMenu;
+    public bool referencedScripts = false;
 
     private void Start() {
         menuView.alpha = 0;
         showMenu = false;
     }
     private void Update() {
-        if (Input.GetKeyDown(KeyCode.Escape)) {
-            toggleView();
+        if (referencedScripts) {
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                toggleView();
+            }
+            displayVelocity();
+            sensitivityText.text = (Mathf.Floor(sensitivitySlider.value * 100f) / 10f).ToString();
         }
-        displayVelocity();
-        sensitivityText.text = (Mathf.Floor(sensitivitySlider.value * 100f) / 10f).ToString();
     }
     private void toggleView() {
         showMenu = !showMenu;
