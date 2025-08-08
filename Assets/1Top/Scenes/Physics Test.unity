@@ -1077,8 +1077,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _masterServer: https://purrbalancer.riten.dev:8080/
   _roomName: 0178a93a7cc34f2190ac6e1897bbbad1
-  _region: us-west
-  _host: us-west.purrlay.riten.dev
+  _region: eu-central
+  _host: eu1.purrlay.riten.dev
   _pollEventsInUpdate: 0
 --- !u!114 &496322911
 MonoBehaviour:
