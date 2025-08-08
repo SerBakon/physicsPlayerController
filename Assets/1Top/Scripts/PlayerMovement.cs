@@ -127,7 +127,6 @@ public class PlayerMovement : NetworkBehaviour {
             setValues();
             canvasController.referencedScripts = true;
         }
-            
     }
 
     protected override void OnDespawned() {

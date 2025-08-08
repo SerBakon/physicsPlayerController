@@ -36,10 +36,11 @@ public class CameraController : NetworkBehaviour
         enabled = isOwner;
 
         canvasController = GameObject.Find("Canvas").GetComponent<CanvasController>();
-
-        InstanceHandler.RegisterInstance(this);
-        canvasController.setCameraScript();
-
+        if(isOwner) {
+            InstanceHandler.RegisterInstance(this);
+            canvasController.setCameraScript();
+        }
+        
         playerCam.gameObject.SetActive(isOwner);
     }
 
