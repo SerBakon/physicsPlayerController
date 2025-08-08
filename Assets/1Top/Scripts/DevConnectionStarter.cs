@@ -1,6 +1,7 @@
 using PurrLobby;
 using PurrNet;
 using PurrNet.Logging;
+using PurrNet.Steam;
 using PurrNet.Transports;
 using System.Collections;
 using UnityEngine;
@@ -21,7 +22,7 @@ public class DevConnectionStarter : MonoBehaviour
         _lobbyDataHolder = FindFirstObjectByType<LobbyDataHolder>();
         if (_lobbyDataHolder)
             isFromlobby = true;
-        else 
+        else
             isFromlobby = false;
     }
 
@@ -36,20 +37,20 @@ public class DevConnectionStarter : MonoBehaviour
             startNormal();
         }
 
-        
+
     }
 
     private void startNormal() {
         _networkManager.transport = transform.GetComponent<UDPTransport>();
 
-        if (!ParrelSync.ClonesManager.IsClone())
-            _networkManager.StartServer();
+        //if (!ParrelSync.ClonesManager.IsClone())
+        _networkManager.StartServer();
         //_networkManager.StartServer();
         _networkManager.StartClient();
     }
 
     private void startFromLobby() {
-        _networkManager.transport = transform.GetComponent<PurrTransport>();
+        _networkManager.transport = transform.GetComponent<SteamTransport>();
         if (!_lobbyDataHolder) {
             PurrLogger.LogError($"Failed to start connection. {nameof(LobbyDataHolder)} is null!", this);
             return;
@@ -60,20 +61,10 @@ public class DevConnectionStarter : MonoBehaviour
             return;
         }
 
-        if (_networkManager.transport is PurrTransport) {
-            (_networkManager.transport as PurrTransport).roomName = _lobbyDataHolder.CurrentLobby.LobbyId;
+        if (_networkManager.transport is SteamTransport) {
+            (_networkManager.transport as SteamTransport).address = _lobbyDataHolder.CurrentLobby.Members[0].Id;
+            Debug.Log((_networkManager.transport as SteamTransport).address);
         }
-
-#if UTP_LOBBYRELAY
-            else if(_networkManager.transport is UTPTransport) {
-                if(_lobbyDataHolder.CurrentLobby.IsOwner) {
-                    (_networkManager.transport as UTPTransport).InitializeRelayServer((Allocation)_lobbyDataHolder.CurrentLobby.ServerObject);
-                }
-                (_networkManager.transport as UTPTransport).InitializeRelayClient(_lobbyDataHolder.CurrentLobby.Properties["JoinCode"]);
-            }
-#else
-        //P2P Connection, receive IP/Port from server
-#endif
 
         if (_lobbyDataHolder.CurrentLobby.IsOwner)
             _networkManager.StartServer();
