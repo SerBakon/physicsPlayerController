@@ -38,10 +38,7 @@ public class CameraController : NetworkBehaviour
         canvasController = GameObject.Find("Canvas").GetComponent<CanvasController>();
         if(isOwner) {
             InstanceHandler.RegisterInstance(this);
-            canvasController.setCameraScript();
         }
-        
-        playerCam.gameObject.SetActive(isOwner);
     }
 
     protected override void OnDespawned() {
@@ -50,6 +47,8 @@ public class CameraController : NetworkBehaviour
 
     void Start()
     {
+        canvasController.setCameraScript();
+        playerCam.gameObject.SetActive(isOwner);
         originalPos = camHolder.transform.localPosition;
 
         if (playerCam == null) {

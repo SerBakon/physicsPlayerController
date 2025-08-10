@@ -123,9 +123,6 @@ public class PlayerMovement : NetworkBehaviour {
         canvasController = GameObject.Find("Canvas").GetComponent<CanvasController>();
         if(isOwner) {
             InstanceHandler.RegisterInstance(this);
-            canvasController.setMovementScript();
-            //setValues();
-            canvasController.referencedScripts = true;
         }
     }
 
@@ -134,6 +131,8 @@ public class PlayerMovement : NetworkBehaviour {
     }
 
     private void setValues() {
+        canvasController.setMovementScript();
+        canvasController.referencedScripts = true;
         readyToJump = true;
         walkingSpeed = movementSpeed;
         sprintingSpeed = movementSpeed * 1.5f;
