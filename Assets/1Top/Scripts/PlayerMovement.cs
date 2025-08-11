@@ -518,6 +518,10 @@ public class PlayerMovement : NetworkBehaviour {
         get { return moveState; }
     }
 
+    public KeyCode crouchKey {
+        get { return crouch; }
+    }
+
     // ---------------------- DEBUG GIZMOS -------------------------- \\
     private void OnDrawGizmos() {
         // Draws the isGrounded check

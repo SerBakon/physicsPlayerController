@@ -49,7 +49,6 @@ public class CameraController : NetworkBehaviour
     void Start()
     {
         canvasController.setCameraScript();
-        
         originalPos = camHolder.transform.localPosition;
 
         if (playerCam == null) {

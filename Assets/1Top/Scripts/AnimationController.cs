@@ -9,6 +9,7 @@ public class AnimationController : NetworkBehaviour
 
     [Header("Animation")]
     [SerializeField] private NetworkAnimator animator;
+    [SerializeField] private AnimationClip slopeSlideAnim;
 
     [Header("Scripts")]
     [SerializeField] private PlayerMovement PlayerMovement;
@@ -16,6 +17,8 @@ public class AnimationController : NetworkBehaviour
 
     private RaycastHit slopeHit;
     private string currentAnim;
+
+    private bool startedSlopeSlide;
     protected override void OnSpawned() {
         base.OnSpawned();
 
@@ -55,6 +58,9 @@ public class AnimationController : NetworkBehaviour
             }
         } else if(onSlope() && isOwner) {
             slopeAnim();
+        }
+        if (Input.GetKeyUp(PlayerMovement.crouchKey)) {
+            startedSlopeSlide = false;
         }
     }
 
@@ -121,7 +127,7 @@ public class AnimationController : NetworkBehaviour
                 setWalking();
                 break;
             case PlayerMovement.movementState.Sliding:
-                changeAnimation("Slide");
+                slopeSlide();
                 break;
             case PlayerMovement.movementState.Crouching:
                 changeAnimation("Crouch Idle");
@@ -130,6 +136,17 @@ public class AnimationController : NetworkBehaviour
                 setSprint();
                 break;
         }
+    }
+    private void slopeSlide() {
+        if(!startedSlopeSlide) {
+            changeAnimation("Slope Slide");
+            startedSlopeSlide = true;
+        }
+        
+        Invoke("continuousSlide", slopeSlideAnim.length);
+    }
+    private void continuousSlide() {
+        changeAnimation("Continuous Slide");
     }
     private void changeAnimation(string animation, float crossfade = 0.05f) {
         if (currentAnim != animation) {
