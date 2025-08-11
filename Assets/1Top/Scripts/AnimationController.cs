@@ -6,6 +6,7 @@ public class AnimationController : NetworkBehaviour
 {
     [Header("Gameobjects")]
     [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject gameObjectPrefab;
 
     [Header("Animation")]
     [SerializeField] private NetworkAnimator animator;
@@ -24,12 +25,13 @@ public class AnimationController : NetworkBehaviour
 
         enabled = isOwner;
 
-        playerPrefab.gameObject.SetActive(!isOwner);
+        //playerPrefab.gameObject.SetActive(!isOwner);
         Debug.Log("Removing gameobject complete");        
     }
 
     private void Update() {
         if (!onSlope() && isOwner) {
+            gameObjectPrefab.transform.localEulerAngles = Vector3.zero;
             switch (PlayerMovement.state) {
                 case PlayerMovement.movementState.Sprinting:
                     setSprint();
@@ -38,7 +40,7 @@ public class AnimationController : NetworkBehaviour
                     setWalking();
                     break;
                 case PlayerMovement.movementState.Sliding:
-                    changeAnimation("Slide");
+                    slideGround();
                     break;
                 case PlayerMovement.movementState.Crouching:
                     setCrouching();
@@ -62,6 +64,10 @@ public class AnimationController : NetworkBehaviour
         if (Input.GetKeyUp(PlayerMovement.crouchKey)) {
             startedSlopeSlide = false;
         }
+    }
+    private void slideGround() {
+        if(currentAnim != "Continuous Slide")
+            changeAnimation("Slide");
     }
 
     private void setCrouching() {
@@ -132,9 +138,25 @@ public class AnimationController : NetworkBehaviour
             case PlayerMovement.movementState.Crouching:
                 changeAnimation("Crouch Idle");
                 break;
+            case PlayerMovement.movementState.Air:
+                slopeAir();
+                break;
             default:
                 setSprint();
                 break;
+        }
+        if (PlayerMovement.state == PlayerMovement.movementState.Sliding) {
+            gameObjectPrefab.transform.localEulerAngles = new Vector3(PlayerMovement.slopeAnglePub, 0, 0);
+        } else {
+            gameObjectPrefab.transform.localEulerAngles = Vector3.zero;
+        }
+    }
+
+    private void slopeAir() {
+        if (Input.GetKey(PlayerMovement.sprintKey)) {
+            setSprint();
+        } else {
+            setWalking();
         }
     }
     private void slopeSlide() {

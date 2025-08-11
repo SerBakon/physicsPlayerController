@@ -1440,6 +1440,7 @@ GameObject:
   - component: {fileID: 1538068926525204358}
   - component: {fileID: 8856005136987225888}
   - component: {fileID: 2226286125543563059}
+  - component: {fileID: 7345675970315156633}
   m_Layer: 0
   m_Name: Armature
   m_TagString: Untagged
@@ -1511,6 +1512,37 @@ MonoBehaviour:
   _ownerAuth: 1
   _autoSyncParameters: 1
   _dontSyncParameters: []
+--- !u!114 &7345675970315156633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4662319006082646542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 817fe5016bd0a2a49a95b6eb338bb132, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _syncPosition: 1
+  _syncRotation: 1
+  _syncScale: 1
+  _syncParent: 1
+  _interpolateSettings: 7
+  _minBufferSize: 1
+  _maxBufferSize: 2
+  _characterControllerPatch: 0
+  _ownerAuth: 1
+  _interpolationTiming: 0
 --- !u!1 &4802219575864485578
 GameObject:
   m_ObjectHideFlags: 0
@@ -2799,6 +2831,7 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   playerPrefab: {fileID: 7542312553677115914}
+  gameObjectPrefab: {fileID: 4662319006082646542}
   animator: {fileID: 2226286125543563059}
   slopeSlideAnim: {fileID: -203655887218126122, guid: 21ad5d4211c8eb846a14c5109da261c8, type: 3}
   PlayerMovement: {fileID: 2424666542689755602}

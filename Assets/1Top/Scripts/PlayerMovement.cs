@@ -75,6 +75,8 @@ public class PlayerMovement : NetworkBehaviour {
 
     private float wallLookAngle;
 
+    private float slopeAngle;
+
     // Vector3's
     private Vector3 direction;
 
@@ -436,6 +438,9 @@ public class PlayerMovement : NetworkBehaviour {
         
         if(Physics.Raycast(feetPos.transform.position, Vector3.down, out slopeHit, .2f)) {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            if (slopeAngle != angle) {
+                slopeAngle = angle;
+            }
             //Debug.Log("On Slope with: " + angle + " Degrees");
             return angle < maxSlopeAngle && angle != 0;
         }
@@ -514,12 +519,22 @@ public class PlayerMovement : NetworkBehaviour {
         get { return rb.linearVelocity.y; }
     }
 
+    public float slopeAnglePub {
+        get { return slopeAngle; }
+    }
+    public float slideVel {
+        get { return minSlideVelocity; }
+    }
+
     public movementState state {
         get { return moveState; }
     }
 
     public KeyCode crouchKey {
         get { return crouch; }
+    }
+    public KeyCode sprintKey {
+        get { return sprint; }
     }
 
     // ---------------------- DEBUG GIZMOS -------------------------- \\
